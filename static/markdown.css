@@ -1,0 +1,24 @@
+body {
+    color:#333;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding:12px 24px 24px;
+    max-width:800px;
+}
+
+pre {
+  border-radius:3px 3px 3px 3px;
+  font:14px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+  padding:12px 12px;
+  border: 1px solid rgb(204, 204, 204);
+  background-color:rgb(249, 249, 249);
+  overflow:auto;
+}
+
+.subtitle {
+    color:#999;
+    font-size:1.5em;
+    font-family:"Warnock Pro","Goudy Old Style","Palatino", "Book Antiqua",Georgia,serif;
+    font-style:italic;
+}
+
+
