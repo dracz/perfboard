@@ -155,6 +155,27 @@ rect.ead {stroke: #aaa;}
 .st_interval_box {padding: 40px 24px 24px 24px;margin-right:12px;margin-bottom:4px;}
 .st_interval_box_lbl {position:relative;top:190px;color:#999;text-align:center;font-weight:bold;font-size:11px;width:1000px;}
 
+#case_select {
+    border:1px solid #444;
+    text-align:left;
+    padding:12px;
+    background-color:#343738;
+    color:#999;
+    margin:6px 6px 0px;
+    -moz-border-radius: 2px;
+    border-radius: 4px;
+    position:absolute;
+    top:56px;
+    right:32px;
+    z-index:1000;
+    overflow:auto;
+}
+
+.sel_row {font-size:12px;padding-bottom:4px;}
+.sel_row:hover {color:white;cursor:pointer;}
+.sel_a {color:#999;}
+.sel_a:hover {color:white;cursor:pointer;}
+
 .stead {
     border:1px solid #444;
     text-align:left;
@@ -167,7 +188,8 @@ rect.ead {stroke: #aaa;}
     border-radius: 4px;
 }
 
-.h2_link { color:#999; float:right; padding-left:12px; font-size:12px;}
+.h2_link { color:#999; float:right; padding-left:18px; font-size:12px;text-decoration:underline;}
+.h2_link:hover {cursor:pointer;color:white;}
 .sttitle {font-weight:normal;color:#ccc; position:absolute;right:40px; left:40px;display:block;}
 .ssect {margin-top:56px;}
 

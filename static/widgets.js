@@ -97,10 +97,23 @@ function widget_box3(node, data, label, klass) {
     });
 }
 
-
 function widget_title(node, title, json) {
-    var n = node.append("div").attr("class", "stbox sttitle")
+    var sel = d3.select("body").append("div")
+	.attr("id", "case_select")
+
+    var baseurl = document.URL.substring(0, document.URL.lastIndexOf("#"));
+    sel.selectAll("div")
+	.data(json.results)
+	.enter()
+	.append("div").attr("class", "sel_row")
+	.append("a").attr("class", "sel_a")
+	.attr("href", function(item){return baseurl+"#case_"+case_id(item)})
+	.attr("onclick", '$("#case_select").hide()')
+	.html(function (item) {return item.labels_file + " --> "+item.recognizer});
+
+    var n = node.append("div").attr("class", "stbox sttitle");
     n.html(title);
+    n.append("div").attr("class", "h2_link").attr("onclick", "$('#case_select').toggle();").html("Case list");
     n.append("a").attr("class", "h2_link").attr("href", "README.html").text("About");
     node.append("div").attr("style", "clear:both;");
 }

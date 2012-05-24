@@ -8,8 +8,8 @@ from perfboard import AbstractRecognizer
 
 class DummyWalkingDetector(AbstractRecognizer):
     """always return the walking results from the example output"""
-    def __init__(self):
-        self.label = "WALKING"
+    def labels(self):
+        return ["WALKING"]
 
     def process(self, chunk):
         pass
@@ -21,8 +21,8 @@ class DummyWalkingDetector(AbstractRecognizer):
 
 class DummyRunningDetector(AbstractRecognizer):
     """always return the running results from the example output"""
-    def __init__(self):
-        self.label = "RUNNING"
+    def labels(self):
+        return ["RUNNING"]
 
     def process(self, chunk):
         pass
@@ -34,8 +34,8 @@ class DummyRunningDetector(AbstractRecognizer):
 
 class DummyStandingDetector(AbstractRecognizer):
     """always return the standing results from the example output"""
-    def __init__(self):
-        self.label = "STANDING"
+    def labels(self):
+        return ["STANDING"]
 
     def process(self, chunk):
         pass

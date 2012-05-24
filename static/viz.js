@@ -49,7 +49,7 @@ function viz(json, l) {
     var body = d3.select("body");
     body.append("a").attr("name", "top") 
 
-    widget_title(body, "Performance Overview");    
+    widget_title(body, "Performance Overview", json);    
 
     var div = body.append("div").attr("class", "brow ssect");
 
@@ -106,17 +106,6 @@ function viz(json, l) {
     pie_chart(div, esc.t_rates, "Truth events (" + json.stats.truth_count + ")");
     pie_chart(div, esc.d_rates, "Detected events (" + json.stats.detected_count + ")");
 
-    var r = body.append("div").attr("style", "padding-left:12px;");
-    var sel = r.append("select").attr("id", "select_case");
-    sel.append("option").text("Select Test Case");
-    $.each(json.results, function(i, item) {
-	var recog = item.recognizer.substring(0, item.recognizer.lastIndexOf("-"));
-	var opt = sel.append("option").attr("value", "case_"+case_id(item)).text(item.labels_file + " --> "+recog);
-    });
-
-    var baseurl = document.URL.substring(0, document.URL.lastIndexOf("#"));
-    sel.on("change", function() {window.location=baseurl+"#"+$("#select_case").val();});
-
     body.append("div").attr("style", "clear:both;padding:24px;");
 
     $.each(json.results, function(index, value) {
@@ -167,8 +156,7 @@ function result_details(result) {
     var body = d3.select("body");
     var detail_id = "detail_"+case_id(result);
 
-    var recog = result.recognizer.substring(0, result.recognizer.lastIndexOf("-"));
-    widget_h2(body, "<code>"+result.labels_file  +" --> " + recog+"</code>", "case_"+case_id(result));
+    widget_h2(body, "<code>"+result.labels_file  +" --> " + result.recognizer + "</code>", "case_"+case_id(result));
 
     var div = body.append("div").attr("class", "brow ssect");
 

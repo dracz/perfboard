@@ -1,7 +1,7 @@
 body {
     color:#333;
     font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    padding:12px 24px 24px;
+    padding: 0px 48px 24px;
     max-width:800px;
 }
 
@@ -20,5 +20,7 @@ pre {
     font-family:"Warnock Pro","Goudy Old Style","Palatino", "Book Antiqua",Georgia,serif;
     font-style:italic;
 }
+
+.bibref {font-size:12px;}
 
 

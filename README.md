@@ -8,13 +8,13 @@ A performance metrics dashboard for continuous context recognition systems
 This project provides a framework for the evaluation and visualization of continuous context-recognition systems. We are investigating systems for automatic detection of visits, paths, and activities from mobile sensor data, and develop these tools to help evaluate the feasibility and quality of various approaches.
 
 ## Overview
-This section provides an overview of a continuous context recognition systems development life-cycle and how this framework fits in.
+This section provides an overview of a typical development life-cycle for continuous context recognition systems and explains how this framework fits in.
 
-1. **Ground truth collection** - Ground truth corpora consist of [raw data][] files, typically collected from sensors carried or worn by a subject, and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user was doing during the labeled interval, and are required for development and evaluation of most classification/detection/recognition systems.
+1. **Ground truth collection** - Ground truth corpora consist of [raw data][] files, typically collected from sensors carried or worn by a subject, and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user (or device) was doing during the labeled interval, and are required for development and evaluation of most classification/detection/recognition systems.
 
-2. **Recognizer development** - The raw data and associated ground truth labels collected in the previous step help in various aspects of the development, training, and testing various components of recognition system pipelines. Here we mainly focus on [binary classification](http://en.wikipedia.org/wiki/Binary_classification) and define an abstract [recognizer interface][] that allows recognizers to be plugged in.
+2. **Recognizer development** - The raw data and associated ground truth labels collected in the previous step are invaluable for the development, training, and testing of various components in a recognition system pipeline. Here we mainly focus on [binary classification](http://en.wikipedia.org/wiki/Binary_classification) and define an abstract [recognizer interface][] that allows recognizers to be plugged in to the system.
 
-3. **Evaluation** - Now with the data and framework, we can feed [raw data][] from selected [ground truth][] cases to various activity recognizers that implement the [recognizer interface][], compare the detection results to the ground truth labels, log the [test results][], and finally, compute and render detailed performance metrics. [[1](#ref1)]
+3. **Evaluation** - Now, using this framework we can feed [raw data][] from selected [ground truth][] cases to one or more recognizers that implement the [recognizer interface][] and analyze the returned results. Results from each recognizer are compared with the labels from each ground truth case, and both individual and aggregate [test results][] are computed and logged. Finally, detailed performance metrics are rendered for further inspection. <span class="bibref">[[1](#ref1)]</span>
 
 4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, or to step 1 to scale-up the testing, gather more test data, etc, and improve performance. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach.
 
@@ -99,24 +99,17 @@ Ground truth files encode labels containing the precise start and end times of a
 Recognizers process time-ordered chunks of [raw data][] and produce sets of [recognizer results][]. The `perfboard.AbstractRecognizer` [python][] class is shown here: 
 
 	class AbstractRecognizer( object ):
-		"""Defines a generic recognizer interface. Override `process` and `results`. 
-		Set `self.labels_recognized` to specify the labels this recognizer can produce
-		"""
-		def __init__(self):
-			self.labels_recognized = []
+		"""Defines a generic recognizer interface."""
+		def process(self, recs):
+			"""process raw data records and update internal state. `recs` is an iterable."""
+			raise NotImplementedError("This is an abstract class!")
 
-		def process(self, chunk):
-			"""process chunk of data (typically json-encoded list of records) and update internal state"""
-			pass
+		def detected(self, time_range=None):
+			"""return ordered list of recognition results of the form `[{"t1":<datetime_start>, "t2":<datetime_end>, "label":<string>}, ...]`
+			`time_range`, if present is a 2-tuple of datetime objects that restrict the result set to items with timestamps within, or overlapping, the range.
+			"""
+			raise NotImplementedError("This is an abstract class!")
 
-		def detected(self):
-			"""returned order list of recognition results."""
-			pass
-
-		def version(self):
-			head, tail = os.path.split(__file__)
-			module = tail.rstrip(".pyc")
-			return ("%s.%s-%s"% (module, self.__class__.__name__, commands.getoutput('git rev-parse HEAD'))).lstrip("./")
 
 
 <a id="recognizer_results"/>

@@ -26,25 +26,22 @@ def init_logging():
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
+
 class AbstractRecognizer( object ):
-    """Defines a generic recognizer interface. Override `process` and `results`. 
-    Set `self.labels_recognized` to specify the labels this recognizer can produce
-    """
-    def __init__(self, labels):
-        self.labels_recognized = []
+    """Defines a simple generic recognizer interface."""
+    def process(self, recs):
+        """process raw data records and update internal state. `recs` is an iterable."""
+        raise NotImplementedError("")
 
-    def process(self, chunk):
-        """process chunk of data (typically json-encoded list of records) and update internal state"""
-        pass
+    def detected(self, time_range=None):
+        """return ordered list of recognition results of the form `[{"t1":<datetime_start>, "t2":<datetime_end>, "label":<string>}, ...]`
+        `time_range`, if present is a 2-tuple of datetime objects that restrict the result set to items with timestamps within, or overlapping, the range.
+        """
+        raise NotImplementedError()
 
-    def detected(self):
-        """returned order list of recognition results."""
-        pass
-
-    def version(self):
-        head, tail = os.path.split(__file__)
-        module = tail.rstrip(".pyc")
-        return ("%s.%s-%s"% (module, self.__class__.__name__, commands.getoutput('git rev-parse HEAD'))).lstrip("./")
+    def labels(self):
+        """returns a list of label classes that this recognizer supports"""
+        raise NotImplementedError()
 
 
 def csv(value):
@@ -80,13 +77,13 @@ def main():
                 for rz in rzs.values():
                     rz.process(chunk) #feed raw data to each of the recognizers
                     
-        for rz in rzs.values():        
-            log.info("evaluating recognizer %s for label %s..." % (rz, rz.label))
+        for rz_name, rz in rzs.iteritems():        
+            log.info("evaluating recognizer %s for labels %s..." % (rz, rz.labels()))
             res = d.copy()
             res["detected"] = rz.results()
-            res["labels"] = [x for x in res["labels"] if x["label"] == rz.label] #filter for binary classification
+            res["labels"] = [x for x in res["labels"] if x["label"] in rz.labels()] 
             res["scores"] = score.score_results(res)
-            res["recognizer"] = rz.version()
+            res["recognizer"] = rz_name
             recogs[res["recognizer"]] += 1
             res["labels_file"] = truth_file
             results.append(res)
