@@ -59,3 +59,8 @@ a:hover {text-decoration:underline;}
 .bibref {font-size:12px;}
 
 
+.number {color:rgb(0, 102, 102)}
+.key {color:rgb(0, 0, 136);}
+.string {color:rgb(0, 136, 0);}
+.null {color:rgb(0, 0, 139)}
+

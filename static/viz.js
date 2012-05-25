@@ -260,3 +260,4 @@ function result_details(result) {
 
     body.append("div").attr("style", "clear:both;padding:24px;");
 }
+

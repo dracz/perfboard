@@ -3,6 +3,7 @@ A performance metrics dashboard for continuous context recognition systems
 
 <link rel="stylesheet" type="text/css" href="markdown.css"></link>
 <script src="http://code.jquery.com/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v2.js"></script>
 <script src="util.js" type="text/javascript"></script>
 <!-- To generate the html from this markdown file: perl ~/Markdown.pl --html4tags README.md > static/README.html -->
 
@@ -43,60 +44,12 @@ Raw data files contain raw sensor and/or behavioral data, for example accelerome
 ## Ground Truth
 Ground truth files encode labels containing the precise start and end times of activities performed by the user, as well as references to the [raw data][] that corresponds to the activities. The ground truth label files are json encoded in [json][] and have the following form:
 
-<pre><code>
-{"data_path": "raw_data/device1_20120516", 
-"t1": "2012-05-16T09:00:00-08:00", 
-"t2": "2012-05-16T09:20:00-08:00",
-"description": "Activity recognition data collection with subject DR on morning of 5/16/2012", 
-"device": "Nokia C7-00", 
-"hw": "353755043225509", 
-"sw": "qt-hubris-client-v0.0.3", 
-"subject": {
-	"bday": "08/22/1975", 
-	"gender": "male", 
-	"handedness": "RIGHT", 
-	"height": "183cm", 
-	"id": "DR", 
-	"weight": "165lbs"
-}, 
-"labels": [
-	{
-	"body_position": "RIGHT_FRONT_POCKET",
-	"t1": "2012-05-16T09:00:00-08:00", 
-	"t2": "2012-05-20T09:05:00-08:00", 
-	"label": "STANDING"
-	}, 
-	{
-	"body_position": "RIGHT_FRONT_POCKET",
-	"t1": "2012-05-16T09:05:00-08:00", 
-	"t2": "2012-05-20T09:15:00-08:00", 
-	"label": "WALKING"
-	}, 
-	{
-	"body_position": "RIGHT_HAND",
-	"t1": "2012-05-16T09:15:00-08:00", 
-	"t2": "2012-05-20T09:15:30-08:00", 
-	"label": "STANDING"
-	}, 
-	{
-	"body_position": "RIGHT_BACK_POCKET",
-	"t1": "2012-05-16T09:15:30-08:00", 
-	"t2": "2012-05-20T09:18:30-08:00", 
-	"label": "RUNNING"
-	}, 
-	{
-	"body_position": "RIGHT_HAND",
-	"t1": "2012-05-16T09:18:30-08:00", 
-	"t2": "2012-05-20T09:20:00-08:00", 
-	"label": "STANDING"
-	}
-], 
-</code>
-</pre>
+<pre><code class="jsontxt" id="truth_example"></code></pre>
+<script>d3.json("example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
-Recognizers process time-ordered chunks of [raw data][] and produce sets of [recognizer results][]. The `perfboard.AbstractRecognizer` [python][] class is shown here: 
+Recognizers process time-ordered chunks of [raw data][] and maintains internal result set. The `perfboard.AbstractRecognizer` [python][] class is shown here: 
 
 	class AbstractRecognizer( object ):
 		"""Defines a simple generic recognizer interface."""
@@ -117,84 +70,10 @@ Recognizers process time-ordered chunks of [raw data][] and produce sets of [rec
 
 <a id="test_results"></a>
 ## Test Results
-The final test results are encoded in a object that combines all [ground truth][] items, [recognizer results][], and performance metrics. Results for the above example would be:
+The final test results are encoded in a object that combines all [ground truth][] items, [recognizer results][], and performance metrics. Results for the above example, might look like:
 
-    {
-        "description": "Activity recognition data collection with subject DR on morning of 5/16/2012", 
-        "device": "Nokia C7-00", 
-        "sw": "qt-hubris-client-v0.0.3", 
-        "data_path": "raw_data/device1_20120516", 
-        "t1": "2012-05-16T09:00:00-08:00"
-        "t2": "2012-05-16T09:20:00-08:00", 
-        "hw": "353755043225509", 
-        "subject": {
-            "weight": "165lbs", 
-            "bday": "08/22/1975", 
-            "gender": "male", 
-            "handedness": "RIGHT", 
-            "height": "183cm", 
-            "id": "DR"
-        }, 
-        "labels": [
-            {
-                "t1": "2012-05-16T09:00:00-08:00", 
-                "t2": "2012-05-20T09:05:00-08:00", 
-                "label": "STANDING", 
-                "body_position": "RIGHT_FRONT_POCKET"
-            }, 
-            {
-                "t1": "2012-05-16T09:05:00-08:00", 
-                "t2": "2012-05-20T09:15:00-08:00", 
-                "label": "WALKING", 
-                "body_position": "RIGHT_FRONT_POCKET"
-            }, 
-            {
-                "t1": "2012-05-16T09:15:00-08:00", 
-                "t2": "2012-05-20T09:15:30-08:00", 
-                "label": "STANDING", 
-                "body_position": "RIGHT_HAND"
-            }, 
-            {
-                "t1": "2012-05-16T09:15:30-08:00", 
-                "t2": "2012-05-20T09:18:30-08:00", 
-                "label": "RUNNING", 
-                "body_position": "RIGHT_BACK_POCKET"
-            }, 
-            {
-                "t1": "2012-05-16T09:18:30-08:00", 
-                "t2": "2012-05-20T09:20:00-08:00", 
-                "label": "STANDING", 
-                "body_position": "RIGHT_HAND"
-            }
-        ], 
-        "results": [
-            {
-                "t1": "2012-05-16T09:00:00-08:00", 
-                "t2": "2012-05-20T09:05:00-08:00", 
-                "label": "STANDING"
-            }, 
-            {
-                "t1": "2012-05-16T09:05:00-08:00", 
-                "t2": "2012-05-20T09:15:00-08:00", 
-                "label": "WALKING"
-            }, 
-            {
-                "t1": "2012-05-16T09:15:00-08:00", 
-                "t2": "2012-05-20T09:15:30-08:00", 
-                "label": "STANDING"
-            }, 
-            {
-                "t1": "2012-05-16T09:15:30-08:00", 
-                "t2": "2012-05-20T09:18:30-08:00", 
-                "label": "RUNNING"
-            }, 
-            {
-                "t1": "2012-05-16T09:18:30-08:00", 
-                "t2": "2012-05-20T09:20:00-08:00", 
-                "label": "STANDING"
-            }
-        ], 
-    }
+<pre><code class="jsontxt" id="results_example"></code></pre>
+<script>d3.json("example_results.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
 
 <a name="metrics"></a>
 ## Performance Metrics
