@@ -3,28 +3,13 @@
 - TZ indicator in dt widget.
 */
 
-SCORES_LIST = "scores_list.json"
 SCORES_FILE = "scores.json";
+ROOT_URL = "/perf/"
 
-d3.json(SCORES_LIST, function(l) {
-    // read list of score files
-    if (!l || l.length == 0) {
-	d3.json(SCORES_FILE, function(json) {
-	    viz(json); //visualize the latest result
-	});
-	return;
-    }
-    
-    // widget for selecting which test to show
-    var sel = d3.select("body").append("select").attr("style", "display:none");
-    $.each(l, function(i, item) {
-	var opt = sel.append("option").attr("value", item).text(item);
-    });
-
-    d3.json(l[0], function(json) {
-	viz(json, l); //visualize the latest result
-    });
+d3.json(SCORES_FILE, function(json) {
+    viz(json); 
 });
+
 
 if (document.URL.lastIndexOf("#") != -1) {
     var baseurl = document.URL.substring(0, document.URL.lastIndexOf("#"));
@@ -37,13 +22,28 @@ function isFloat(f) { return typeof(f)==="number" && !isInteger(f); }
 
 var float_fmt = d3.format(".2f");
 
+function viz_file(f) {
+    d3.json(ROOT_URL+f, function(json) {
+	viz(json); 
+    });
+}
+
+var case_num = 0; //numbering cases 1-N
+
 function viz(json, l) {
+    if (json==null) {
+	widget_title($("body"),"No results found");
+	return;
+    }
+    //reset the view
+    d3.select("body").html("");
+    case_num = 0;
     console.log(json);
     
     //viz the result object. l is plist of other result objs
     var test_time = d3.time.format("%Y-%m-%dT%H:%M:%S").parse(json.t.substring(0, 19)); //strips the fractional seconds
 
-    var title = "Performace Results: " + test_time;
+    var title = "Performance Results: " + test_time;
     d3.select("html").append("title").text(title);
 
     var body = d3.select("body");
@@ -112,7 +112,7 @@ function viz(json, l) {
 	result_details(value);
     });
 
-    body.append("div").attr("style", "clear:both;padding:0px 12px;color:#ccc;font-size:12px;margin-bottom:24px;").html("For a description of the metrics used here, see [1]<br/><br/>[1] <b>Ward, J. A., Lukowicz, P., & Gellersen, H. W. (2011). Performance metrics for activity recognition.</b> ACM Transactions on Intelligent Systems and Technology (TIST), 2(1), 1-23. doi:10.1145/1889681.1889687. <a style='font-size:smaller' href='http://gtubicomp.pbworks.com/w/file/fetch/48480476/Ward2011-Performance%20metrics%20for%20activity%20recognition.pdf'>[PDF]</a>");
+    body.append("div").attr("style", "clear:both;padding:0px 12px;color:#ccc;font-size:12px;margin-bottom:24px;").html("For a description of the metrics used here, see:<br/><br/>[1] <b>Ward, J. A., Lukowicz, P., & Gellersen, H. W. (2011). Performance metrics for activity recognition.</b> ACM Transactions on Intelligent Systems and Technology (TIST), 2(1), 1-23. doi:10.1145/1889681.1889687. <a style='font-size:smaller' href='http://gtubicomp.pbworks.com/w/file/fetch/48480476/Ward2011-Performance%20metrics%20for%20activity%20recognition.pdf'>[PDF]</a>");
 
     body.append("p").attr("class", "footer").text("");
 }
@@ -131,8 +131,6 @@ x_pad = 0;
 var height = 3*bar_h + 3*bar_pad + label_pad;
 
 var tm_fmt = d3.time.format("%I:%M %p");
-
-var case_num = 0; //numbering cases 1-N
 
 var ISO_FMT = d3.time.format("%Y-%m-%dT%H:%M:%S");
 
@@ -156,7 +154,7 @@ function result_details(result) {
     var body = d3.select("body");
     var detail_id = "detail_"+case_id(result);
 
-    widget_h2(body, "<code>"+result.labels_file  +" --> " + result.recognizer + "</code>", "case_"+case_id(result));
+    widget_h2(body, "Case " + case_num + ": &nbsp;<code>"+result.labels_file  +" --> " + result.recognizer + "</code>", "case_"+case_id(result));
 
     var div = body.append("div").attr("class", "brow ssect");
 
@@ -262,4 +260,3 @@ function result_details(result) {
 
     body.append("div").attr("style", "clear:both;padding:24px;");
 }
-

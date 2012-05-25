@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, commands, collections
+import argparse, commands, collections, shutil
 import datetime
 import json
 import os
@@ -11,7 +11,9 @@ import time
 
 import score
 
-from util import read_json
+from util import read_json, write_json
+
+DEFAULT_OUTPATH = "static"
 
 log = None
 
@@ -50,12 +52,16 @@ def csv(value):
 def json_encode(obj):
     return json.dumps(obj, default=lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None)
 
+SCORES_FILE = "scores.json"        #hold latest scores
+SCORES_LIST = "scores_list.json"
+
 def main():
     init_logging()
 
     parser = argparse.ArgumentParser(description="performance metric dashboard for continuous context recognition")
     parser.add_argument("truths", metavar='TRUTH_FILE', type=str, nargs="+", help='ground truth files')
-    parser.add_argument("--outpath", metavar="OUTPUT_PATH", type=str, help="where to write output file(s)")
+    parser.add_argument("--outpath", metavar="OUTPUT_PATH", type=str, default=DEFAULT_OUTPATH, help="dir to write `scores.json`")
+    parser.add_argument("--norotate", action="store_true", default=False, help="to disable rotating scores")
     parser.add_argument("--recognizers", metavar="RECOGNIZERS", type=csv, default=[], required=True, help="comma-seperated fully qualified class names of recognizers to use")
 
     args = parser.parse_args()
@@ -93,13 +99,29 @@ def main():
     scored["recognizers"] = recogs.keys()
     scored["t"] = datetime.datetime.now().isoformat()
 
-    if args.outpath:
-        with open(args.outpath, "w") as f:
-            log.info("writing scored results to %s..." % args.outpath)
-            f.write(json_encode(scored))
+    sf = os.path.join(args.outpath, SCORES_FILE)
+    if os.path.exists(sf):
+        if not args.norotate:
+            #copy existing scores.json to scores-<iso time>.json, update scores_history
+            dt = read_json(sf)["t"]
+            head, tail = os.path.split(sf)
+            name, ext = tail.rsplit(".", 1)
+            fn = "%s-%s.%s"%(name,dt,ext)
+            nf = os.path.join(args.outpath, fn)
+            log.info("rotating %s to %s..." % (sf, nf))
+            shutil.copyfile(sf, nf)
 
-    else:
-        print json_encode(scored)
+            sl = os.path.join(args.outpath, SCORES_LIST)
+            log.info("updating %s..." % sl)        
+            if not os.path.exists(sl):
+                write_json([fn], sl)
+            else:
+                l = read_json(sl)
+                l.insert(0, fn)
+                write_json(l, sl)
+            
+    log.info("writing %s..." % sf)        
+    write_json(scored, sf)
 
 def init_recognizers(rzs):
     d = dict() #import user-defined recognizers

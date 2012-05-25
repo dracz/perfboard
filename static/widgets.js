@@ -97,7 +97,30 @@ function widget_box3(node, data, label, klass) {
     });
 }
 
+var SCORES_LIST = "scores_list.json";
+
 function widget_title(node, title, json) {
+    var n = node.append("div").attr("class", "stbox sttitle");
+    n.append("a").attr("href", ROOT_URL).attr("class", "tlink").text(title);
+    n.append("a").attr("class", "h2_link").attr("href", "README.html").text("About");
+
+    d3.json(SCORES_LIST, function(json) {
+	n.append("div").attr("class", "h2_link").attr("onclick", "$('#results_select').toggle();$('#case_select').hide();").html("Results History ("+json.length+")");
+
+	var sel = d3.select("body").append("div")
+	    .attr("id", "results_select").attr("class", "tr_select")
+
+	sel.selectAll("div")
+	    .data(json)
+	    .enter()
+	    .append("div").attr("class", "sel_row")
+	    .append("span").attr("class", "sel_a")
+	    .attr("onclick", function (item) {
+		return '$("#results_select").hide();viz_file("'+item+'");';
+	    })
+	    .html(function (item) {return item})
+    });
+
     var sel = d3.select("body").append("div")
 	.attr("id", "case_select")
 
@@ -111,10 +134,8 @@ function widget_title(node, title, json) {
 	.attr("onclick", '$("#case_select").hide()')
 	.html(function (item) {return item.labels_file + " --> "+item.recognizer});
 
-    var n = node.append("div").attr("class", "stbox sttitle");
-    n.html(title);
-    n.append("div").attr("class", "h2_link").attr("onclick", "$('#case_select').toggle();").html("Case list");
-    n.append("a").attr("class", "h2_link").attr("href", "README.html").text("About");
+    n.append("div").attr("class", "h2_link").attr("onclick", "$('#case_select').toggle();$('#results_select').hide();").html("Test Cases ("+json.results.length+")");
+
     node.append("div").attr("style", "clear:both;");
 }
 
@@ -182,7 +203,7 @@ function pie_chart(node, data, title) {
 
     arcs.append("svg:text")
 	.attr("class", "legend_val")
-        .text(function(d, i) { return (d.data.value*100.0).toFixed(2) + " %"; }) 
+        .text(function(d, i) { return (d.data.value*100.0).toFixed(1) + " %"; }) 
 	.attr("y", function(d, i) { return i*(box_h + 4) - r  + leg_yoff + 14;})
 	.attr("x", r + box_h + 52);
 

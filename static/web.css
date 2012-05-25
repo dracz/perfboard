@@ -1,10 +1,11 @@
 
 body {
-    font-family:Arial, Tahoma, Geneva, sans serif;
-    font-size:16px;
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    font-size:14px;
     padding:0px 32px;
     background-color:#111314;
     overflow:auto;
+    line-height:20px;
 }
 
 label {
@@ -23,6 +24,7 @@ hr {
 
 line {color:#ccc;}
 code { font:13px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+
 .td {
     display:inline-block;
     font-size:14px;
@@ -115,7 +117,6 @@ rect:hover {
 .legend_val {
     font-size:13px;
     fill:#999;
-    font-weight:bold;
 }
 
 .legend_title {
@@ -169,11 +170,29 @@ rect.ead {stroke: #aaa;}
     right:32px;
     z-index:1000;
     overflow:auto;
+    display:none;
+}
+
+.tr_select {
+    border:1px solid #444;
+    text-align:left;
+    padding:12px;
+    background-color:#343738;
+    color:#999;
+    margin:6px 6px 0px;
+    -moz-border-radius: 2px;
+    border-radius: 4px;
+    position:absolute;
+    top:56px;
+    right:32px;
+    z-index:1000;
+    overflow:auto;
+    display:none;
 }
 
 .sel_row {font-size:12px;padding-bottom:4px;}
 .sel_row:hover {color:white;cursor:pointer;}
-.sel_a {color:#999;}
+.sel_a {color:#999;text-decoration:none;}
 .sel_a:hover {color:white;cursor:pointer;}
 
 .stead {
@@ -188,9 +207,11 @@ rect.ead {stroke: #aaa;}
     border-radius: 4px;
 }
 
-.h2_link { color:#999; float:right; padding-left:18px; font-size:12px;text-decoration:underline;}
+.tlink {color:#999;text-decoration:none;}
+.tlink:hover {cursor:pointer;color:white;}
+.h2_link { color:#999; float:right; margin-left:18px; font-size:12px;text-decoration:underline;}
 .h2_link:hover {cursor:pointer;color:white;}
-.sttitle {font-weight:normal;color:#ccc; position:absolute;right:40px; left:40px;display:block;}
+.sttitle {font-weight:normal;color:#ccc;display:inline-block;}
 .ssect {margin-top:56px;}
 
 .stbox1 {
