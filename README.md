@@ -43,10 +43,56 @@ Raw data files contain raw sensor and/or behavioral data, for example accelerome
 ## Ground Truth
 Ground truth files encode labels containing the precise start and end times of activities performed by the user, as well as references to the [raw data][] that corresponds to the activities. The ground truth label files are json encoded in [json][] and have the following form:
 
-<script>
-var json = "";
-console.log(syntaxHighlight(json));
-</script>
+<pre><code>
+{"data_path": "raw_data/device1_20120516", 
+"t1": "2012-05-16T09:00:00-08:00", 
+"t2": "2012-05-16T09:20:00-08:00",
+"description": "Activity recognition data collection with subject DR on morning of 5/16/2012", 
+"device": "Nokia C7-00", 
+"hw": "353755043225509", 
+"sw": "qt-hubris-client-v0.0.3", 
+"subject": {
+	"bday": "08/22/1975", 
+	"gender": "male", 
+	"handedness": "RIGHT", 
+	"height": "183cm", 
+	"id": "DR", 
+	"weight": "165lbs"
+}, 
+"labels": [
+	{
+	"body_position": "RIGHT_FRONT_POCKET",
+	"t1": "2012-05-16T09:00:00-08:00", 
+	"t2": "2012-05-20T09:05:00-08:00", 
+	"label": "STANDING"
+	}, 
+	{
+	"body_position": "RIGHT_FRONT_POCKET",
+	"t1": "2012-05-16T09:05:00-08:00", 
+	"t2": "2012-05-20T09:15:00-08:00", 
+	"label": "WALKING"
+	}, 
+	{
+	"body_position": "RIGHT_HAND",
+	"t1": "2012-05-16T09:15:00-08:00", 
+	"t2": "2012-05-20T09:15:30-08:00", 
+	"label": "STANDING"
+	}, 
+	{
+	"body_position": "RIGHT_BACK_POCKET",
+	"t1": "2012-05-16T09:15:30-08:00", 
+	"t2": "2012-05-20T09:18:30-08:00", 
+	"label": "RUNNING"
+	}, 
+	{
+	"body_position": "RIGHT_HAND",
+	"t1": "2012-05-16T09:18:30-08:00", 
+	"t2": "2012-05-20T09:20:00-08:00", 
+	"label": "STANDING"
+	}
+], 
+</code>
+</pre>
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
