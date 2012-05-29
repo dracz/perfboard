@@ -8,21 +8,21 @@ A performance metrics dashboard for continuous context recognition systems
 <!-- To generate the html from this markdown file: perl ~/Markdown.pl --html4tags README.md > static/README.html -->
 
 ## Background
-This project provides a framework for the evaluation and visualization of continuous context-recognition systems. We are investigating systems for automatic detection of visits, paths, and activities from mobile sensor data, and develop these tools to help evaluate the feasibility and quality of various approaches.
+This project provides a framework for the evaluation and visualization of continuous context-recognition systems. We are investigating systems for automatic detection of visits, paths, and activities from mobile sensor data, and developed this system to help evaluate the feasibility and quality of various approaches.
 
 ## Overview
 This section provides an overview of a typical development life-cycle for continuous context recognition systems and explains how this framework fits in.
 
-1. **Ground truth collection** - Ground truth corpora consist of [raw data][] files, typically collected from sensors carried or worn by a subject, and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user (or device) was doing during the labeled interval, and are required for development and evaluation of most classification/detection/recognition systems.
+1. **Ground truth collection** - Ground truth corpora consist of [raw data][] files, typically collected from sensors carried or worn by a subject, and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user (or device) was doing during the labeled interval, and are useful for the development and evaluation of sytems for classification, detection, or recognition.
 
-2. **Recognizer development** - The raw data and associated ground truth labels collected in the previous step are invaluable for the development, training, and testing of various components in a recognition system pipeline. Here we mainly focus on [binary classification](http://en.wikipedia.org/wiki/Binary_classification) and define an abstract [recognizer interface][] that allows recognizers to be plugged in to the system.
+2. **Recognizer development** - The raw data and associated ground truth labels are required for training and testing of various components in a recognition system pipeline. Here we mainly focus on [binary classification](http://en.wikipedia.org/wiki/Binary_classification) and define an abstract [recognizer interface][] that allows user-defined classifiers to be plugged in to the system.
 
 3. **Evaluation** - Now, using this framework we can feed [raw data][] from selected [ground truth][] cases to one or more recognizers that implement the [recognizer interface][] and analyze the returned results. Results from each recognizer are compared with the labels from each ground truth case, and both individual and aggregate [test results][] are computed and logged. Finally, detailed [performance metrics](#metrics) are rendered for further inspection. 
 
-4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, or to step 1 to scale-up the testing, gather more test data, etc, and improve performance. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach.
+4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more test data and scale up the testing. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach, and begin to move toward productization.
 
 ## Running Performance Tests
-The `perfboard` command line utility can be used to test the performance for one or more classifiers using a set of labeled [ground truth][] data. The tool can instantiate one or more recognizers, read a set of ground truth files, feed raw data from the ground truths to the recognizers, retrieve the results from the recognizers, and finally compute and render performance metrics. Usage:
+The `perfboard` command line utility can be used to test the performance for one or more classifiers using a set of labeled [ground truth][] data. The tool can read a set of ground truth input files, instantiate one or more specified recognizers, feed raw data from the ground truths to the recognizers, retrieve the results from the recognizers, and finally compute and render performance metrics. Usage:
 
     perfboard.py [-h] [--outpath OUTPUT_PATH] --recognizers RECOGNIZER_LIST
 	                    TRUTH_FILE [TRUTH_FILE ...]
@@ -49,7 +49,7 @@ Ground truth files encode labels containing the precise start and end times of a
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
-Recognizers process time-ordered chunks of [raw data][] and maintains internal result set. The `perfboard.AbstractRecognizer` [python][] class is shown here: 
+Recognizers process time-ordered chunks of [raw data][] and return detection results. The `perfboard.AbstractRecognizer` [python][] class is shown here: 
 
 	class AbstractRecognizer( object ):
 		"""Defines a simple generic recognizer interface."""
@@ -72,8 +72,8 @@ Recognizers process time-ordered chunks of [raw data][] and maintains internal r
 ## Test Results
 The final test results are encoded in a object that combines all [ground truth][] items, [recognizer results][], and performance metrics. Results for the above example, might look like:
 
-<pre><code class="jsontxt" id="results_example"></code></pre>
-<script>d3.json("example_results.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
+<pre><code class="jsontxt" id="scores_example"></code></pre>
+<script>d3.json("example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
 
 <a name="metrics"></a>
 ## Performance Metrics

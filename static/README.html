@@ -14,17 +14,17 @@
 
 <h2>Background</h2>
 
-<p>This project provides a framework for the evaluation and visualization of continuous context-recognition systems. We are investigating systems for automatic detection of visits, paths, and activities from mobile sensor data, and develop these tools to help evaluate the feasibility and quality of various approaches.</p>
+<p>This project provides a framework for the evaluation and visualization of continuous context-recognition systems. We are investigating systems for automatic detection of visits, paths, and activities from mobile sensor data, and developed this system to help evaluate the feasibility and quality of various approaches.</p>
 
 <h2>Overview</h2>
 
 <p>This section provides an overview of a typical development life-cycle for continuous context recognition systems and explains how this framework fits in.</p>
 
 <ol>
-<li><p><strong>Ground truth collection</strong> - Ground truth corpora consist of <a href="#raw_data">raw data</a> files, typically collected from sensors carried or worn by a subject, and <a href="#ground_truth">ground truth</a> labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the <em>truth</em> about what the user (or device) was doing during the labeled interval, and are required for development and evaluation of most classification/detection/recognition systems.</p></li>
-<li><p><strong>Recognizer development</strong> - The raw data and associated ground truth labels collected in the previous step are invaluable for the development, training, and testing of various components in a recognition system pipeline. Here we mainly focus on <a href="http://en.wikipedia.org/wiki/Binary_classification">binary classification</a> and define an abstract <a href="#recognizer_interface">recognizer interface</a> that allows recognizers to be plugged in to the system.</p></li>
+<li><p><strong>Ground truth collection</strong> - Ground truth corpora consist of <a href="#raw_data">raw data</a> files, typically collected from sensors carried or worn by a subject, and <a href="#ground_truth">ground truth</a> labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the <em>truth</em> about what the user (or device) was doing during the labeled interval, and are useful for the development and evaluation of sytems for classification, detection, or recognition.</p></li>
+<li><p><strong>Recognizer development</strong> - The raw data and associated ground truth labels are required for training and testing of various components in a recognition system pipeline. Here we mainly focus on <a href="http://en.wikipedia.org/wiki/Binary_classification">binary classification</a> and define an abstract <a href="#recognizer_interface">recognizer interface</a> that allows user-defined classifiers to be plugged in to the system.</p></li>
 <li><p><strong>Evaluation</strong> - Now, using this framework we can feed <a href="#raw_data">raw data</a> from selected <a href="#ground_truth">ground truth</a> cases to one or more recognizers that implement the <a href="#recognizer_interface">recognizer interface</a> and analyze the returned results. Results from each recognizer are compared with the labels from each ground truth case, and both individual and aggregate <a href="#test_results">test results</a> are computed and logged. Finally, detailed <a href="#metrics">performance metrics</a> are rendered for further inspection. </p></li>
-<li><p><strong>Iteration</strong> - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, or to step 1 to scale-up the testing, gather more test data, etc, and improve performance. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach.</p></li>
+<li><p><strong>Iteration</strong> - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more test data and scale up the testing. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach, and begin to move toward productization.</p></li>
 </ol>
 
 <h2>Running Performance Tests</h2>
@@ -65,7 +65,7 @@
 
 <h2>Recognizer Interface</h2>
 
-<p>Recognizers process time-ordered chunks of <a href="#raw_data">raw data</a> and produce sets of [recognizer results][]. The <code>perfboard.AbstractRecognizer</code> <a href="http://python.org">python</a> class is shown here: </p>
+<p>Recognizers process time-ordered chunks of <a href="#raw_data">raw data</a> and return detection results. The <code>perfboard.AbstractRecognizer</code> <a href="http://python.org">python</a> class is shown here: </p>
 
 <pre><code>class AbstractRecognizer( object ):
     """Defines a simple generic recognizer interface."""
@@ -90,9 +90,9 @@
 
 <p>The final test results are encoded in a object that combines all <a href="#ground_truth">ground truth</a> items, [recognizer results][], and performance metrics. Results for the above example, might look like:</p>
 
-<pre><code class="jsontxt" id="results_example"></code></pre>
+<pre><code class="jsontxt" id="scores_example"></code></pre>
 
-<script>d3.json("example_results.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
 
 <p><a name="metrics"></a></p>
 
