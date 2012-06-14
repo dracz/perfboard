@@ -3,11 +3,11 @@
 - TZ indicator in dt widget.
 */
 
-SCORES_FILE = "scores.json";
+SCORES_FILE = SCORES_DIR + "scores.json";
 ROOT_URL = "/perf/"
 
 d3.json(SCORES_FILE, function(json) {
-    viz(json); 
+    viz(json, SCORES_FILE); 
 });
 
 
@@ -21,26 +21,32 @@ function isInteger(f) {return typeof(f)==="number" && Math.round(f) == f;}
 function isFloat(f) { return typeof(f)==="number" && !isInteger(f); }
 
 var float_fmt = d3.format(".2f");
+var int_fmt = d3.format(".1f");
 
 function viz_file(f) {
     d3.json(ROOT_URL+f, function(json) {
-	viz(json); 
+	viz(json, f); 
     });
 }
 
 var case_num = 0; //numbering cases 1-N
 
-function viz(json, l) {
-    if (json==null) {
-	widget_title($("body"),"No results found");
-	return;
-    }
+var curr_res_fname;
+
+function viz(json, fname) {
+    curr_res_fname = fname;
+
     //reset the view
     d3.select("body").html("");
     case_num = 0;
+
     console.log(json);
+    if (json==null||json==undefined) {
+	widget_title(d3.select("body"),"No results found");
+	return;
+    }
     
-    //viz the result object. l is plist of other result objs
+    //viz the result object
     var test_time = d3.time.format("%Y-%m-%dT%H:%M:%S").parse(json.t.substring(0, 19)); //strips the fractional seconds
 
     var title = "Performance Results: " + test_time;
@@ -57,7 +63,7 @@ function viz(json, l) {
     widget_dt(div, test_time, "Test Time");
 
     //stats about number of test cases, truths, and detected
-    widget_box3(div, [ ["Cases", json.results.length], ["Labels", json.stats.truth_count], ["Detected", json.stats.detected_count] ], "Test Cases", "stbox2");
+    widget_box3(div, [ ["Cases", json.results.length], ["Truths", json.stats.truth_count], ["Detected", json.stats.detected_count] ], "Test Cases", "stbox2");
 
     var frsc = json.scores.frame_scores;
 
@@ -104,7 +110,9 @@ function viz(json, l) {
 
     var div = body.append("div").attr("class", "brow");
     pie_chart(div, esc.t_rates, "Truth events (" + json.stats.truth_count + ")");
-    pie_chart(div, esc.d_rates, "Detected events (" + json.stats.detected_count + ")");
+
+    if (json.stats.detected_count)
+	pie_chart(div, esc.d_rates, "Detected events (" + json.stats.detected_count + ")");
 
     body.append("div").attr("style", "clear:both;padding:24px;");
 
@@ -121,16 +129,17 @@ function pct_str(dec) {
     return (dec*100.0).toFixed(2) + "%";
 }
 
-var width = 1100,
+var width = 1082,
 bar_h = 24,
 bar_pad = 6,
 label_pad = 32,
-x_offset = 0,
+x_offset = 24,
 x_pad = 0;
 
 var height = 3*bar_h + 3*bar_pad + label_pad;
 
 var tm_fmt = d3.time.format("%I:%M %p");
+var tms_fmt = d3.time.format("%I:%M:%S %p");
 
 var ISO_FMT = d3.time.format("%Y-%m-%dT%H:%M:%S");
 
@@ -194,8 +203,6 @@ function result_details(result) {
 
     body.append("div").attr("style", "clear:both;");
 
-    body.append("div").attr("id", detail_id).attr("class", "item_detail");
-
     var truth_times = $.map(result.labels, function(item, i) { return {"t1":Date.parse(item.t1), "t2":Date.parse(item.t2), "label":item.label}; });
     var detected_times = $.map(result.detected, function(item, i) { return {"t1":Date.parse(item.t1), "t2":Date.parse(item.t2), "label":item.label}; });
     var segments = $.map(result.scores.segments, function(item, i) { return {"t1":Date.parse(item.t1), "t2":Date.parse(item.t2), "err":item.err, "score":item.score}; });
@@ -205,10 +212,13 @@ function result_details(result) {
 	    .domain([segments[0]["t1"], segments[segments.length-1]["t2"]])
 	    .range([0, width]);
 
-	var xticks = x.ticks(d3.time.minutes, 5);
+	var xticks = x.ticks(12);
 
-	var chart = body.append("div").attr("class", "stbox st_interval_box").append("svg:svg")
-	    .attr("width", width+x_offset+x_pad)
+	var div = body.append("div").attr("class", "stbox st_interval_box");
+	div.append("div").attr("id", detail_id).attr("class", "item_detail");
+
+	var chart = div.append("svg:svg")
+	    .attr("width", width+(x_offset*2)+x_pad)
 	    .attr("height", height)
 	    .append("svg:g")
 
@@ -235,8 +245,19 @@ function result_details(result) {
 	    .attr("text-anchor", "middle");
     }
 
+    if (result.sample_intervals != undefined) {
+	var tdiff = segments[segments.length-1]["t2"] - segments[0]["t1"];
+	$.each(result.sample_intervals, function(i, v) {
+	    var count = result.sample_intervals[i].count;
+	    var s = "<b>"+i+"</b>"+ " | count: " + count  + " | rate: " + int_fmt(tdiff/1000/count) + "s " ; 
+	    ti_chart(body, v, x, s);	    
+	});
+    }
+
+    body.append("div").attr("style", "clear:both;");
+
     var div = body.append("div").attr("class", "brow");
-    
+
     var tot_frames = fsc.frame_counts.P + fsc.frame_counts.N;
     
     if (fsc.frame_counts.P) {
@@ -255,7 +276,7 @@ function result_details(result) {
     if (result.detected.length > 0)
 	pie_chart(div, esc.d_rates, "Detected events (" + result.detected.length + ")");
 
-    var div = body.append("div").attr("class", "brow");
+    var div = body.append("div").attr("class", "brow ead");
     ead_chart(div, result.scores.events.t_counts, result.scores.events.d_counts);
 
     body.append("div").attr("style", "clear:both;padding:24px;");

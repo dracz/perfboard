@@ -9,8 +9,9 @@ body {
     line-height:20px;
 }
 
-p code {
-  font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+li {margin-bottom:4px;}
+
+li code, p code {
   color: #52595d;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -20,11 +21,14 @@ p code {
   background-clip: padding-box;
   border: 1px solid #ccc;
   background-color: #f9f9f9;
-  padding: 0px 4px 2px 4px;
+  padding: 1px 4px 1px 4px;
   display: inline-block;
 }
 
-code {white-space: nowrap;}
+code {
+    font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+    white-space: nowrap;
+}
 
 pre {
   border: 1px solid #cacaca;
@@ -41,7 +45,7 @@ pre {
   background-clip: padding-box;
   background-color: #FAFAFB;
   color: #393939;
-  margin: 0px;
+  margin: 18px 0px;
 }
 
 pre code {white-space: pre;}

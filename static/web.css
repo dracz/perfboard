@@ -63,6 +63,18 @@ code { font:13px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mo
     opacity:0.8;
 }
 
+.samples_chart line {
+    stroke:#eee;
+    stroke-width:1px;
+    stroke-opacity:0.1;
+}
+
+.ti_chart rect {
+    stroke:#eee;
+    fill: #ccc;
+    opacity:0.8;
+}
+
 rect:hover {
     opacity:1;
 }
@@ -80,13 +92,12 @@ rect:hover {
 }
 
 .item_detail {
-    padding-left:4px;
+    padding:4px;
     color:#999;
     font-weight:normal;
-    font-size:16px;
-    position:absolute;
-    margin-top:24px;
-    width:1200px;
+    font-size:14px;
+    height:18px;
+    width:1100px;
     text-align:center;
 }
 
@@ -140,25 +151,7 @@ rect.ead {stroke: #aaa;}
 
 .test_choice {font-size:11px;}
 
-.st_interval_box {padding: 40px 24px 24px 24px;margin-right:12px;margin-bottom:4px;}
-.st_interval_box_lbl {position:relative;top:190px;color:#999;text-align:center;font-weight:bold;font-size:11px;width:1000px;}
-
-#case_select {
-    border:1px solid #444;
-    text-align:left;
-    padding:12px;
-    background-color:#343738;
-    color:#999;
-    margin:6px 6px 0px;
-    -moz-border-radius: 2px;
-    border-radius: 4px;
-    position:absolute;
-    top:56px;
-    right:32px;
-    z-index:1000;
-    overflow:auto;
-    display:none;
-}
+.st_interval_box {padding:24px;margin-bottom:4px;}
 
 .tr_select {
     border:1px solid #444;
@@ -170,10 +163,11 @@ rect.ead {stroke: #aaa;}
     -moz-border-radius: 2px;
     border-radius: 4px;
     position:absolute;
-    top:56px;
-    right:32px;
+    top:52px;
+    left:850px;
     z-index:1000;
     overflow:auto;
+    max-height:75%;
     display:none;
 }
 
@@ -181,15 +175,15 @@ rect.ead {stroke: #aaa;}
 .sel_row:hover {color:white;cursor:pointer;}
 .sel_a {color:#999;text-decoration:none;}
 .sel_a:hover {color:white;cursor:pointer;}
-
+.selected {color:#ccc;}
 .stead {
     border:1px solid #444;
     text-align:left;
-    padding:0px 32px;
+    padding:0px 24px;
     background-color:#343738;
     float:left;
     color:#999;
-    margin:4px;
+    margin-top:6px;
     -moz-border-radius: 2px;
     border-radius: 4px;
 }
@@ -198,7 +192,7 @@ rect.ead {stroke: #aaa;}
 .tlink:hover {cursor:pointer;color:white;}
 .h2_link { color:#999; float:right; margin-left:18px; font-size:12px;text-decoration:underline;}
 .h2_link:hover {cursor:pointer;color:white;}
-.sttitle {font-weight:normal;color:#ccc;display:inline-block;width:90%;margin-bottom:2px;}
+.sttitle {font-weight:normal;color:#ccc;display:inline-block;width:1130px;margin-bottom:2px;}
 .ssect {margin-top:0px;}
 
 .stbox {
@@ -208,19 +202,19 @@ rect.ead {stroke: #aaa;}
     background-color:#343738;
     float:left;
     color:#999;
-    margin:4px 4px 0px 0px;
+    margin:6px 6px 0px 0px;
     -moz-border-radius: 2px;
     border-radius: 4px;
 }
 
 .stbox1 {
-    width:180px;
+    width:170px;
     height:200px;
 }
 
 .stbox2 {
     height:200px;
-    width:126px;
+    width:120px;
 }
 
 .stbox3 {
@@ -228,7 +222,7 @@ rect.ead {stroke: #aaa;}
     width:170px;
 }
 
-.st_pie2 {width:250px;height:180px;padding:8px 20px;}
+.st_pie2 {width:249px;height:180px;padding:8px 17px;}
 
 .stval {
     text-shadow:1px 1px 1px #3f3f3f, -1px -1px 1px #3f3f3f;
@@ -248,7 +242,7 @@ rect.ead {stroke: #aaa;}
 }
 
 .stval4 {
-    font-size:24px;
+    font-size:22px;
     color:#d3d4d4;
 }
 
@@ -296,6 +290,6 @@ rect.ead {stroke: #aaa;}
 .st_red {color:#AE432E;}
 .st_yellow {color:#B5712E;}
 .ampm {font-size:30px;}
-.ampm2 {font-size:18px;}
+.ampm2 {font-size:14px;}
 .st_pct {font-size:16px;position:relative;top:-10px;left:0px;}
 .brow {white-space: nowrap;}

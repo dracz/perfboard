@@ -46,12 +46,14 @@ function widget_overview(node, date1, date2, subject, label) {
     var row = div.append("div").attr("class", "strow");
     row.append("div").attr("class", "stval5").text(date_fmt(date1));    
 
-    var row = div.append("div").attr("class", "strow");
-    var s = "";
-    for (var k in subject) {
-	s+="<div class='stdat'>" + k +": <span style='float:right;'>"+subject[k]+ "</span></div>";
+    if (subject) {
+	var row = div.append("div").attr("class", "strow");
+	var s = "";
+	for (var k in subject) {
+	    s+="<div class='stdat'>" + k +": <span style='float:right;'>"+subject[k]+ "</span></div>";
+	}
+	row.html(s);
     }
-    row.html(s);
 }
 
 var ST_PCT = "pct";
@@ -90,14 +92,16 @@ function widget_box3(node, data, label, klass) {
 	    div2.append("span").attr("class", "st_pct").text("%");
 	}
 	else {
-	    if (!val)
+	    if (!val && val!=0)
 		val = "NA";
 	    row.append("div").attr("class", "stval2"+klass).text(val);
 	}
     });
 }
 
-var SCORES_LIST = "scores_list.json";
+var SCORES_DIR = "scores/"; 
+
+var SCORES_LIST = SCORES_DIR + "scores_list.json";
 
 function widget_title(node, title, json) {
     var n = node.append("div").attr("class", "stbox sttitle");
@@ -105,6 +109,10 @@ function widget_title(node, title, json) {
     n.append("a").attr("class", "h2_link").attr("href", "README.html").text("About");
 
     d3.json(SCORES_LIST, function(json) {
+	console.log(json);
+	if (!json)
+	    return;
+
 	n.append("div").attr("class", "h2_link").attr("onclick", "$('#results_select').toggle();$('#case_select').hide();").html("Results History ("+json.length+")");
 
 	var sel = d3.select("body").append("div")
@@ -114,15 +122,23 @@ function widget_title(node, title, json) {
 	    .data(json)
 	    .enter()
 	    .append("div").attr("class", "sel_row")
-	    .append("span").attr("class", "sel_a")
+	    .append("span")
+	    .attr("class", function (item) {
+		if (item == curr_res_fname)
+		    return "sel_a selected";
+		else
+		    return "sel_a";
+	    })
 	    .attr("onclick", function (item) {
 		return '$("#results_select").hide();viz_file("'+item+'");';
 	    })
-	    .html(function (item) {return item})
+	    .html(function (item) {
+		return item
+	    })
     });
 
     var sel = d3.select("body").append("div")
-	.attr("id", "case_select")
+	.attr("id", "case_select").attr("class", "tr_select")
 
     var baseurl = document.URL.substring(0, document.URL.lastIndexOf("#"));
     sel.selectAll("div")
@@ -150,6 +166,9 @@ function widget_h2(node, title, id) {
 }
 
 function pie_chart(node, data, title) {
+    if (!data)
+	return;
+
     //create pie chart from data and add to node
     var w = 260,
     r = 65, //radius
@@ -249,7 +268,6 @@ function convert_label(lbl) {
 
 function interval_chart(node, data, x, klass, y_off, id) {
     //create an time interval chart from the data and add to node. id refers to interval detail elem
-
     node.append("svg:g")
 	.attr("class", klass)
 	.selectAll("rect")
@@ -270,7 +288,7 @@ function interval_chart(node, data, x, klass, y_off, id) {
 
 function interval_detail(d, klass, id) {
     //show detail of this interval
-    var s = tm_fmt(new Date(d["t1"])) + " - " + tm_fmt(new Date(d["t2"]));
+    var s = tms_fmt(new Date(d["t1"])) + " - " + tms_fmt(new Date(d["t2"]));
     if (klass == "truth_chart")
 	s += " (Ground truth) - " + d.label;
     else if (klass == "detected_chart")
@@ -315,7 +333,7 @@ function data_table(node, title, data, type) {
 }
 
 function ead_chart(node, t, d) {
-    var width = 1060,
+    var width = 1110,
     height = 85,
     bar_h = 32,
     y_off = 0;
@@ -389,4 +407,61 @@ function ead_box(node, x, w, klass, lbl, bar_h) {
 	.attr("x", x + 6)
 	.attr("y", bar_h/2 + 5 )
 	.text(lbl)
+}
+
+
+function samples_chart(node, data, x, title) {
+    //shows the times of various samples
+    var div = node.append("div").attr("class", "stbox");
+    var chart = div.append("svg:svg")
+	.attr("width", width+(x_offset*2)+x_pad)
+	.attr("height", 16)
+	.append("svg:g")
+
+    var y_off = 0;
+    var line_w = 1;
+
+    chart.append("svg:g")
+	.attr("class", "samples_chart")
+	.selectAll("line")
+	.data(data)
+	.enter().append("svg:line")
+	.attr("y1", 0)
+	.attr("y2", 32)
+	.attr("x1", function(d, i) {return x_offset + x(Date.parse(d)); })
+	.attr("x2", function(d, i) {return x_offset + x(Date.parse(d)); })
+
+    div.append("div")
+	.attr("style", "text-align:center;font-size:11px;;padding-top:6px;")
+	.html(title)
+
+}
+
+function ti_chart(node, data, x, title) {
+    //time interval chart
+    var div = node.append("div").attr("class", "stbox");
+    var chart = div.append("svg:svg")
+	.attr("width", width+(x_offset*2)+x_pad)
+	.attr("height", 16)
+
+    var y_off = 0;
+    var line_w = 1;
+
+    data = $.map(data.intervals, function(item, i) { return {"t1":Date.parse(item.t1), "t2":Date.parse(item.t2) } });
+
+    chart.append("svg:g")
+	.attr("class", "ti_chart")
+	.selectAll("rect")
+	.data(data)
+	.enter().append("svg:rect")
+	.attr("rx", 2)
+	.attr("ry", 2)
+	.attr("y", y_off)
+	.attr("x", function(d, i) { return x_offset + x(d["t1"]); })
+	.attr("width", function(d, i) { if((x(d["t2"]) - x(d["t1"])) < 0)console.log(d);return x(d["t2"]) - x(d["t1"]); })
+	.attr("height", 16);
+
+    div.append("div")
+	.attr("style", "text-align:center;font-size:11px;;padding-top:6px;")
+	.html(title);
 }

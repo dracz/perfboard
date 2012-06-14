@@ -1,5 +1,5 @@
 {
-    "data_path": "test/20120523/*.recs", 
+    "data_path": "test/20120523_device123/*.gz", 
     "description": "Visit detection example 5/23/2012", 
     "device": "Nokia C7-00", 
     "sw": "qt-hubris-client-v0.0.3", 

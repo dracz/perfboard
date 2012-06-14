@@ -40,9 +40,12 @@ def extract_segments(results):
     """extract the time segments from labels and detected """
     tt = [ ( parse_date(x["t1"]), parse_date(x["t2"]) ) for x in results["labels"]+results["detected"] ]
     ts = sorted(itertools.chain.from_iterable( tt ))
-    ts.insert(0, parse_date(results["t1"]))
-    ts.append(parse_date(results["t2"]))
-    ts.sort()
+    t1 = parse_date(results["t1"])
+    if t1 < ts[0]:
+        ts.insert(0, t1)
+    t2 = parse_date(results["t2"])
+    if t2 > ts[-1]:
+        ts.append(t2)
     return [ dict(t1=x[0].isoformat(), t2=x[1].isoformat()) for x in list(sliding_window(ts, 2)) ]
 
 def label_segments(segs, truths, detected):
