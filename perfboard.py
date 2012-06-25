@@ -9,7 +9,7 @@ import logging
 import pprint, re
 import time
 
-import score, viz
+import score
 
 from util import read_json, write_json
 from iso8601.iso8601 import parse_date

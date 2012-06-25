@@ -26,6 +26,11 @@ This section provides an overview of a typical development process for a continu
 
 4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more labeled data to scale up the testing. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach and begin to move toward productization.
 
+## Setup
+
+_List install/setup instructions here..._
+
+
 <a id="raw_data"></a>
 ## Raw Data
 Raw data files contain timestamped sensor and/or behavioral data logged (continuously or periodically) from one or more devices associated with a test subject. Raw data often come from mobile phone sensors like WLAN, GSM, GPS, magnetometer, Bluetooth, ambient light, microphone, etc, but may also come from other sensors in the environment or worn on the body, or from external data sources. Raw data records are encoded in an application specific manner and should only be passed to recognizers that understand the format.
