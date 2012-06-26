@@ -2,12 +2,12 @@
 A performance metrics dashboard for continuous context recognition systems
 
 <link rel="stylesheet" type="text/css" href="markdown.css"></link>
-<script src="http://code.jquery.com/jquery.min.js"></script>
-<script src="http://d3js.org/d3.v2.js"></script>
+<script src="jquery.js"></script>
+<script src="d3.js"></script>
 <script src="util.js" type="text/javascript"></script>
 
-<link href="prettify/prettify.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="prettify/prettify.js"></script>
+<link href="prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="prettify.js"></script>
 <script type="text/javascript">$(document).ready(function() {prettyPrint()});</script>
 
 <!-- To generate the html from this markdown file: perl ~/Markdown.pl --html4tags README.md > static/README.html -->
@@ -58,7 +58,7 @@ The following table describes the various fields of ground truth items:
   - `label` - String constant defining the ground truth label
   - `body_position` - String constant identifying the where the device was carried on the body
 
-How ground truth labels are initially captured is out of the scope of this document, but there are various approaches such as self-reported, hand-written user diaries, mobile phone-based labeling tools, crowdsourced labeling, and of course, following subjects around with clipboards.
+How ground truth labels are initially captured is out of the scope of this document, but there are various approaches such as verbal self-reporting, user diaries, mobile phone-based labeling tools, crowdsourced labeling, and following subjects around with clipboards.
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
