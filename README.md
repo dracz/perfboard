@@ -6,34 +6,32 @@ A performance metrics dashboard for continuous context recognition systems
 <script src="d3.js"></script>
 <script src="util.js" type="text/javascript"></script>
 
-<link href="prettify.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="prettify.js"></script>
-<script type="text/javascript">$(document).ready(function() {prettyPrint()});</script>
-
-<!-- To generate the html from this markdown file: perl ~/Markdown.pl --html4tags README.md > static/README.html -->
+<!-- To generate the html from this markdown file: markdown --html4tags README.md > static/README.html -->
 
 ## Background
-We've been investigating systems for automated recognition of visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data, 2) interfacing with context recognizers, 2) feeding data from test cases to context recognizer(s), and 3) scoring and visualizing recognizer performance <span class='bibref'>[[1](#ref1)]</span>.
+We've been investigating systems for automated recognition of visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data, 2) interfacing with context recognizers, 2) feeding data from test cases to context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[[1](#ref1)]</span>.
 
 ## Overview
-This section provides an overview of a typical development process for a continuous context recognition system and explains how this framework can fit in. Here we define a continuous context recognition system as one that continually infers context (of user/device) from raw data streams (from user/device). Recognizers consume raw time series data (from sensors and events) and produce labels over time intervals (with some confidence). The labels encode the context of the user/device over various time interval, for example: _HOME_, _WORK_, _RUNNING_, _WALKING_, _BIKING_, _DRIVING_. 
+This section provides an overview of our basic development process for continuous context recognition systems and explains how this framework fits in. Ccontinuous context recognition systems infer context (of user, device, environment, etc) from streams of raw sensor data and produce labeled time intervals (with some confidence). The labels encode the prediction/esitimation of the context of the over the time interval, for example: _HOME_, _WORK_, _RUNNING_, _WALKING_, _BIKING_, _DRIVING_. 
 
-1. **Ground truth collection** - We start with the collection of ground truth corpora consisting of [raw data][] files, typically collected from sensors carried or worn by a subject, and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user (or device) was doing during the labeled interval, and are essential for the development and evaluation of systems for classification, detection, or recognition.
+1. **Ground truth collection** - To help drive the development, we start with the collection of ground truth corpora consisting of [raw data][] files (typically collected from sensors carried or worn by a subject) and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user (or device) was doing during the labeled interval, and are essential for the development and evaluation of systems for classification, detection, or recognition.
 
-2. **Recognizer development** - Now that we have some raw data and ground truth, we begin developing our recognition system. Here, we mainly focus on [binary classification](http://en.wikipedia.org/wiki/Binary_classification), and try to build and test various recognizers that can infer the context of the user from some raw data streams. We implement the abstract [recognizer interface][] that allows user-defined classifiers to be plugged in to the test framework.
+2. **Recognizer development** - Now that we have some raw data and ground truth, we begin developing our recognition system. Here, we mainly focus on [binary classification](http://en.wikipedia.org/wiki/Binary_classification), and try to build and test various recognizers that can infer the context of the user from some raw data streams. We implement the abstract [recognizer interface][] that allows user-defined classifiers to be plugged in to the test framework. 
 
-3. **Evaluation** - Once we have candidate recognizers ready for testing, we feed [raw data][] from [ground truth][] cases to specified recognizers (implementing the [recognizer interface][]) and analyze the returned results. The recognizer results are compared with the ground truth labels and detailed [performance metrics](#metrics) are computed, [test results][] are logged, and visualizations are rendered for inspection.
+3. **Evaluation** - Once we have candidate recognizers ready for testing, we feed [raw data][] from [ground truth][] cases to specified recognizers (implementing the [recognizer interface][]) and analyze the returned results. The recognizer results are compared with the ground truth labels, detailed [performance metrics](#metrics) are computed, [test results][] are logged, and visualizations are rendered for inspection.
 
-4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more labeled data to scale up the testing. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach and begin to move toward productization.
+4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more labeled data and refine or scale up the testing. Once we are satisfied with the results over a diverse set of test cases, we begin to productize.
 
 ## Setup
 
-_List install/setup instructions here..._
+This project is implemented in Python2.7 and Javascript. One additional python package is required for datetime parsing and can be installed in debain/ubuntu with:
+
+    sudo apt-get install python-iso8601
 
 
 <a id="raw_data"></a>
 ## Raw Data
-Raw data files contain timestamped sensor and/or behavioral data logged (continuously or periodically) from one or more devices associated with a test subject. Raw data often come from mobile phone sensors like WLAN, GSM, GPS, magnetometer, Bluetooth, ambient light, microphone, etc, but may also come from other sensors in the environment or worn on the body, or from external data sources. Raw data records are encoded in an application specific manner and should only be passed to recognizers that understand the format.
+Raw data files contain timestamped sensor and/or behavioral data logged (continuously or periodically) from one or more devices associated with a test subject. We often use mobile phone sensors like WLAN, GSM, GPS, magnetometer, Bluetooth, ambient light, microphone, etc, but may also include data from other sensors in the environment or worn on the body, or from external data sources. Raw data records are encoded in an application specific manner and thus should only be passed to recognizers that understand the format.
 
 <a id="ground_truth"></a>
 ## Ground Truth
@@ -56,32 +54,17 @@ The following table describes the various fields of ground truth items:
   - `t1` - [isotime][] timestamp of label start
   - `t2` - [isotime][] timestamp of label end
   - `label` - String constant defining the ground truth label
-  - `body_position` - String constant identifying the where the device was carried on the body
-
+  - `body_position` - String constant identifying the where the device was carried on the body (optional)
+  - `data` - label-specific data (optional)
+  
 How ground truth labels are initially captured is out of the scope of this document, but there are various approaches such as verbal self-reporting, user diaries, mobile phone-based labeling tools, crowdsourced labeling, and following subjects around with clipboards.
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
-Recognizers process time-ordered chunks of [raw data][] records and return lists of [recognizer results](#recognizer_results). Recognizers MUST implement the `perfboard.AbstractRecognizer` interface to be compatible with this framework. The `perfboard.AbstractRecognizer` [python][] class is shown here: 
+Recognizers process time-ordered chunks of [raw data][] records and return lists of [recognizer results](#recognizer_results). Recognizers MUST implement the `recog.AbstractRecognizer` interface to be compatible with this framework. The `recog.AbstractRecognizer` [python][] class is shown here: 
 
-<pre><code class="prettyprint lang-py">class AbstractRecognizer( object ):
-	"""Defines a simple generic recognizer interface."""
-	def process(self, data):
-		"""process raw data records and update internal state."""
-		raise NotImplementedError()
-
-	def get_results(self, time_range=None):
-		"""return ordered list of recognition results of the form `[{"t1":<datetime_start>, "t2":<datetime_end>, "label":<string>}, ...]`
-		`time_range`, if present is a 2-tuple of datetime objects that restrict the result set to items with timestamps within, or overlapping, the range.
-		"""
-		raise NotImplementedError()
-
-	def labels_supported(self):
-		"""returns a list of labels that this recognizer supports (generates). 
-		This is used by the framework to determine how to score the recognizers given some arbitrary labeled ground truth data.
-		"""
-		raise NotImplementedError()
-</code></pre>
+<pre><code id="recog"></code></pre>
+<script>d3.text("recog.py", function(text) {$("#recog").html(syntaxHighlight(text))});$("#recog");</script>
 
 Raw data are fed to a recognizer using the `process()` method. Results are retrieved using the `get_results()` method and example is shown in [recognizer results](#recognizer_results). The `labels_supported()` method is used to filter the [ground truth][] labels to include only those supported by the specified recognizer before the results are compared.
 
