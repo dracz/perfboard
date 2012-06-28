@@ -10,10 +10,6 @@
 
 <script src="util.js" type="text/javascript"></script>
 
-<p><link href="prettify/prettify.css" type="text/css" rel="stylesheet" /></p>
-
-<script type="text/javascript" src="prettify/prettify.js"></script>
-
 <!-- To generate the html from this markdown file: markdown --html4tags README.md > static/README.html -->
 
 <h2>Background</h2>
@@ -62,20 +58,55 @@
 <li><code>sw</code> - client software identifier</li>
 <li><code>t1</code> - earliest t1 of data record, label, or detected</li>
 <li><code>t2</code> - latest t2 for data record, label, or detected</li>
-<li><code>hw</code> - hardware identifier</li>
+<li><code>hw</code> - device hardware identifier</li>
 <li><code>device</code> - device model (optional)</li>
-<li><code>subject</code> - infomartion about the human test subject</li>
-<li><code>labels</code> - list of labeled intervals over the raw data. Labels contain the following fields:
+<li><code>subject</code> - information about the human subject (optional)</li>
+<li><code>labels</code> - list of labeled intervals over the raw data. Each item in the list contains:
 <ul>
 <li><code>t1</code> - <a href="http://en.wikipedia.org/wiki/ISO_8601">isotime</a> timestamp of label start</li>
 <li><code>t2</code> - <a href="http://en.wikipedia.org/wiki/ISO_8601">isotime</a> timestamp of label end</li>
-<li><code>label</code> - String constant defining the ground truth label</li>
+<li><code>label</code> - A string constant that labels the context. See list of <a href="#labels">pre-defined labels</a></li>
 <li><code>body_position</code> - String constant identifying the where the device was carried on the body (optional)</li>
 <li><code>data</code> - label-specific data (optional)</li>
 </ul></li>
 </ul>
 
 <p>How ground truth labels are initially captured is out of the scope of this document, but there are various approaches such as verbal self-reporting, user diaries, mobile phone-based labeling tools, crowdsourced labeling, and following subjects around with clipboards.</p>
+
+<p><a id="labels"></a></p>
+
+<h3>Labels</h3>
+
+<p>Here are some predefined labels for various context items:</p>
+
+<ul>
+<li><code>AT_HOME</code></li>
+<li><code>AT_WORK</code></li>
+<li><code>IN_PLACE</code>: Visiting a specific place. The <code>data</code> portion of <code>IN_PLACE</code> labels are dictionaries that may contain the following optioanl fields:
+<ul>
+<li><code>id</code>: The place id </li>
+<li><code>name</code>: The place name </li>
+<li><code>address</code>: The place address </li>
+<li><code>ll</code>: Approximate ll of the visit </li>
+<li><code>desc</code>: A description of the place </li>
+</ul></li>
+<li><code>ENTERING_PLACE</code></li>
+<li><code>EXITING_PLACE</code></li>
+<li><code>WALKING</code></li>
+<li><code>RUNNING</code></li>
+<li><code>BIKING</code></li>
+<li><code>SKATEBOARDING</code></li>
+<li><code>SNOWBOARDING</code></li>
+<li><code>SITTING</code></li>
+<li><code>STANDING</code></li>
+<li><code>DRIVING</code></li>
+<li><code>IN_CAR</code></li>
+<li><code>ON_TRAIN</code></li>
+<li><code>ON_BUS</code></li>
+<li><code>ON_BOAT</code></li>
+<li><code>ON_PLANE</code></li>
+<li>...</li>
+</ul>
 
 <p><a id="recognizer_interface"></a></p>
 
@@ -145,17 +176,17 @@
 <p>The result object has the following fields:</p>
 
 <ul>
-<li><code>t</code> is the timestamp of the test run in <a href="http://en.wikipedia.org/wiki/ISO_8601">isotime</a></li>
-<li><code>stats</code> is dictionary of total number of ground truths <code>truth_count</code>, recognizer results <code>detected_count</code>, and scored segments <code>segment_count</code> from all test cases</li>
-<li><code>results</code> is list of the scored test case results. Each result object has the same form as a <a href="#ground_truth">ground truth</a> item, with additional keys: 
+<li><code>t</code>: timestamp of the test run in <a href="http://en.wikipedia.org/wiki/ISO_8601">isotime</a></li>
+<li><code>stats</code>:  dictionary of total number of ground truths <code>truth_count</code>, recognizer results <code>detected_count</code>, and scored segments <code>segment_count</code> from all test cases</li>
+<li><code>results</code>: list of the scored test case results. Each result object has the same form as a <a href="#ground_truth">ground truth</a> item, with additional keys: 
 <ul>
-<li><code>detected</code> list of recognizer results for the test</li>
-<li><code>scores</code> contains the event and frame scores for the test</li>
-<li><code>recognizer</code> field specifying which recognizer was used in the test</li>
-<li>items in <code>labels</code> and <code>detected</code> now have <code>event_score</code> field containing the <a href="#event_score">event score</a></li>
+<li><code>detected</code>: list of recognizer results for the test</li>
+<li><code>scores</code>: dictionary containing event scores, frame scores, and various stats for the test</li>
+<li><code>recognizer</code>: field specifying which recognizer was used in the test</li>
+<li><code>event_score</code>: field containing the <a href="#event_score">event score</a> for items in <code>labels</code> and <code>detected</code></li>
 </ul></li>
-<li><code>recognizers</code> is list of recognizers that were used in the test</li>
-<li><code>scores</code> is dictionary of aggregate scores from all ground truth cases combined. </li>
+<li><code>recognizers</code>: list of recognizers that were used in the test</li>
+<li><code>scores</code>: dictionary of aggregate scores from all ground truth cases combined. </li>
 </ul>
 
 <p><a name="dashboard"></a></p>
@@ -170,7 +201,7 @@
 
 <p><img src="dashboard_top.png"/></p>
 
-<p>The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of detected output, and overall stats of frame and event scores. Frame scores report whether individual units of time (seconds) match the ground truth. <em>Positive frames</em> are those where we have a ground truth prediction for the frame, <em>negative frames</em> are those where there is no ground truth label (null-class). Overview statistics and pie charts for <em>positive frames</em>, <em>negative frames</em>, <em>ground truth events</em>, and <em>detected events</em> show the rates of the various kinds of errors.</p>
+<p>The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of items detected, and the overall stats for frame and event scores. Frame scores report the fraction of time that the detection output matches the ground truth. <em>Positive frames</em> are those where we have a ground truth prediction for the frame, <em>negative frames</em> are those where there is no ground truth label (null-class). Overview statistics and pie charts for <em>positive frames</em>, <em>negative frames</em>, <em>ground truth events</em>, and <em>detected events</em> show the rates of the various kinds of errors.</p>
 
 <p>The top bar also provides a pull-down selector to jump to individual test results, and another pull-down selector for rendering other result sets.</p>
 

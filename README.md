@@ -47,17 +47,46 @@ The following table describes the various fields of ground truth items:
 - `sw` - client software identifier
 - `t1` - earliest t1 of data record, label, or detected
 - `t2` - latest t2 for data record, label, or detected
-- `hw` - hardware identifier
+- `hw` - device hardware identifier
 - `device` - device model (optional)
-- `subject` - infomartion about the human test subject
-- `labels` - list of labeled intervals over the raw data. Labels contain the following fields:
+- `subject` - information about the human subject (optional)
+- `labels` - list of labeled intervals over the raw data. Each item in the list contains:
   - `t1` - [isotime][] timestamp of label start
   - `t2` - [isotime][] timestamp of label end
-  - `label` - String constant defining the ground truth label
+  - `label` - A string constant that labels the context. See list of [pre-defined labels](#labels)
   - `body_position` - String constant identifying the where the device was carried on the body (optional)
   - `data` - label-specific data (optional)
   
 How ground truth labels are initially captured is out of the scope of this document, but there are various approaches such as verbal self-reporting, user diaries, mobile phone-based labeling tools, crowdsourced labeling, and following subjects around with clipboards.
+
+<a id="labels"></a>
+### Labels
+Here are some predefined labels for various context items:
+
+- `AT_HOME`
+- `AT_WORK`
+- `IN_PLACE`: Visiting a specific place. The `data` portion of `IN_PLACE` labels are dictionaries that may contain the following optioanl fields:
+    - `id`: The place id 
+	- `name`: The place name 
+	- `address`: The place address 
+	- `ll`: Approximate ll of the visit 
+	- `desc`: A description of the place 
+- `ENTERING_PLACE`
+- `EXITING_PLACE`
+- `WALKING`
+- `RUNNING`
+- `BIKING`
+- `SKATEBOARDING`
+- `SNOWBOARDING`
+- `SITTING`
+- `STANDING`
+- `DRIVING`
+- `IN_CAR`
+- `ON_TRAIN`
+- `ON_BUS`
+- `ON_BOAT`
+- `ON_PLANE`
+- ...
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
@@ -112,15 +141,15 @@ Final test results are encoded in a object that combines all [ground truth][] it
 
 The result object has the following fields:
 
-- `t` is the timestamp of the test run in [isotime][]
-- `stats` is dictionary of total number of ground truths `truth_count`, recognizer results `detected_count`, and scored segments `segment_count` from all test cases
-- `results` is list of the scored test case results. Each result object has the same form as a [ground truth][] item, with additional keys: 
-  - `detected` list of recognizer results for the test
-  - `scores` contains the event and frame scores for the test
-  - `recognizer` field specifying which recognizer was used in the test
-  - items in `labels` and `detected` now have `event_score` field containing the [event score](#event_score)
-- `recognizers` is list of recognizers that were used in the test
-- `scores` is dictionary of aggregate scores from all ground truth cases combined. 
+- `t`: timestamp of the test run in [isotime][]
+- `stats`:  dictionary of total number of ground truths `truth_count`, recognizer results `detected_count`, and scored segments `segment_count` from all test cases
+- `results`: list of the scored test case results. Each result object has the same form as a [ground truth][] item, with additional keys: 
+  - `detected`: list of recognizer results for the test
+  - `scores`: dictionary containing event scores, frame scores, and various stats for the test
+  - `recognizer`: field specifying which recognizer was used in the test
+  - `event_score`: field containing the [event score](#event_score) for items in `labels` and `detected`
+- `recognizers`: list of recognizers that were used in the test
+- `scores`: dictionary of aggregate scores from all ground truth cases combined. 
 
 <a name="dashboard"></a>
 ## Dashboard
@@ -132,7 +161,7 @@ The top of the dashboard shows an overview of results from all the test cases in
 
 <img src="dashboard_top.png"/>
 
-The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of detected output, and overall stats of frame and event scores. Frame scores report whether individual units of time (seconds) match the ground truth. _Positive frames_ are those where we have a ground truth prediction for the frame, _negative frames_ are those where there is no ground truth label (null-class). Overview statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_ show the rates of the various kinds of errors.
+The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of items detected, and the overall stats for frame and event scores. Frame scores report the fraction of time that the detection output matches the ground truth. _Positive frames_ are those where we have a ground truth prediction for the frame, _negative frames_ are those where there is no ground truth label (null-class). Overview statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_ show the rates of the various kinds of errors.
 
 The top bar also provides a pull-down selector to jump to individual test results, and another pull-down selector for rendering other result sets.
 
