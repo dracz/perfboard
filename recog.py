@@ -6,7 +6,7 @@ class AbstractRecognizer( object ):
         """train the recognizer with the `recs` and ground truth `labels`""" 
         raise NotImplementedError()
         
-    def process(self, recs):
+    def test(self, recs):
         """process raw data records and update internal state. `recs` is an iterable.
         """
         raise NotImplementedError()
