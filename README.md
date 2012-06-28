@@ -65,12 +65,12 @@ Here are some predefined labels for various context items:
 
 - `AT_HOME`
 - `AT_WORK`
-- `IN_PLACE`: Visiting a specific place. The `data` portion of `IN_PLACE` labels are dictionaries that may contain the following optioanl fields:
-    - `id`: The place id 
-	- `name`: The place name 
-	- `address`: The place address 
-	- `ll`: Approximate ll of the visit 
-	- `desc`: A description of the place 
+- `IN_PLACE` - Visiting a specific place. The `data` portion of `IN_PLACE` labels are dictionaries that may contain the following optional fields:
+    - `id` -  The place id 
+	- `name` - The place name 
+	- `address` - The place address 
+	- `ll` - Approximate ll of the visit 
+	- `desc` - A description of the place 
 - `ENTERING_PLACE`
 - `EXITING_PLACE`
 - `WALKING`
