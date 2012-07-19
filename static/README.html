@@ -14,11 +14,11 @@
 
 <h2>Background</h2>
 
-<p>We've been investigating systems for automated recognition of visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data, 2) interfacing with context recognizers, 2) feeding data from test cases to context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[<a href="#ref1">1</a>]</span>.</p>
+<p>We've been investigating systems for automated recognition of places, visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data from labeled streams of sensor data, 2) interfacing with context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[<a href="#ref1">1</a>]</span>.</p>
 
 <h2>Overview</h2>
 
-<p>This section provides an overview of our basic development process for continuous context recognition systems and explains how this framework fits in. Ccontinuous context recognition systems infer context (of user, device, environment, etc) from streams of raw sensor data and produce labeled time intervals (with some confidence). The labels encode the prediction/esitimation of the context of the over the time interval, for example: <em>HOME</em>, <em>WORK</em>, <em>RUNNING</em>, <em>WALKING</em>, <em>BIKING</em>, <em>DRIVING</em>. </p>
+<p>This section describes a simplified development lifecycle for continuous context recognition systems and explains how this framework fits in. For our purposes, continuous context recognition systems infer/predict the context of a user and/or device, from periodic samples of raw sensor data. A context recognizer outputs/updates labeled time intervals that encode the prediction/esitimation of the context over the time interval, for example: <em>HOME</em>, <em>WORK</em>, <em>RUNNING</em>, <em>WALKING</em>, <em>BIKING</em>, <em>DRIVING</em>. </p>
 
 <ol>
 <li><p><strong>Ground truth collection</strong> - To help drive the development, we start with the collection of ground truth corpora consisting of <a href="#raw_data">raw data</a> files (typically collected from sensors carried or worn by a subject) and <a href="#ground_truth">ground truth</a> labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the <em>truth</em> about what the user (or device) was doing during the labeled interval, and are essential for the development and evaluation of systems for classification, detection, or recognition.</p></li>
@@ -27,11 +27,11 @@
 <li><p><strong>Iteration</strong> - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more labeled data and refine or scale up the testing. Once we are satisfied with the results over a diverse set of test cases, we begin to productize.</p></li>
 </ol>
 
-<h2>Setup</h2>
+<h2>Implementation</h2>
 
-<p>This project is implemented in Python2.7 and Javascript. One additional python package is required for datetime parsing and can be installed in debain/ubuntu with:</p>
+<p>The command line interface and scoring rules are implemented in <a href="">python</a> 2.7. The visualizations made with javascript, <a href="http://jquery.com">jQuery</a>, and <a href="http://d3js.org">d3.js</a>. <a href="http://pypi.python.org/pypi/iso8601/">iso8601.py</a> is used for date parsing and must be installed with, for example:</p>
 
-<pre><code>sudo apt-get install python-iso8601
+<pre><code>pip install iso8601
 </code></pre>
 
 <p><a id="raw_data"></a></p>

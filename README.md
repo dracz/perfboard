@@ -9,10 +9,10 @@ A performance metrics dashboard for continuous context recognition systems
 <!-- To generate the html from this markdown file: markdown --html4tags README.md > static/README.html -->
 
 ## Background
-We've been investigating systems for automated recognition of visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data, 2) interfacing with context recognizers, 2) feeding data from test cases to context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[[1](#ref1)]</span>.
+We've been investigating systems for automated recognition of places, visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data from labeled streams of sensor data, 2) interfacing with context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[[1](#ref1)]</span>.
 
 ## Overview
-This section provides an overview of our basic development process for continuous context recognition systems and explains how this framework fits in. Ccontinuous context recognition systems infer context (of user, device, environment, etc) from streams of raw sensor data and produce labeled time intervals (with some confidence). The labels encode the prediction/esitimation of the context of the over the time interval, for example: _HOME_, _WORK_, _RUNNING_, _WALKING_, _BIKING_, _DRIVING_. 
+This section describes a simplified development lifecycle for continuous context recognition systems and explains how this framework fits in. For our purposes, continuous context recognition systems infer/predict the context of a user and/or device, from periodic samples of raw sensor data. A context recognizer outputs/updates labeled time intervals that encode the prediction/esitimation of the context over the time interval, for example: _HOME_, _WORK_, _RUNNING_, _WALKING_, _BIKING_, _DRIVING_. 
 
 1. **Ground truth collection** - To help drive the development, we start with the collection of ground truth corpora consisting of [raw data][] files (typically collected from sensors carried or worn by a subject) and [ground truth][] labels provided by researchers, subjects, click workers, or other observers, over intervals of the data. The labels provide the *truth* about what the user (or device) was doing during the labeled interval, and are essential for the development and evaluation of systems for classification, detection, or recognition.
 
@@ -22,11 +22,11 @@ This section provides an overview of our basic development process for continuou
 
 4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more labeled data and refine or scale up the testing. Once we are satisfied with the results over a diverse set of test cases, we begin to productize.
 
-## Setup
+## Implementation
 
-This project is implemented in Python2.7 and Javascript. One additional python package is required for datetime parsing and can be installed in debain/ubuntu with:
+The command line interface and scoring rules are implemented in [python]() 2.7. The visualizations made with javascript, [jQuery](http://jquery.com), and [d3.js](http://d3js.org). [iso8601.py](http://pypi.python.org/pypi/iso8601/) is used for date parsing and must be installed with, for example:
 
-    sudo apt-get install python-iso8601
+    pip install iso8601
 
 
 <a id="raw_data"></a>

@@ -4,7 +4,7 @@
 */
 
 SCORES_FILE = SCORES_DIR + "scores.json";
-ROOT_URL = "/perf/"
+ROOT_URL = "/"
 
 d3.json(SCORES_FILE, function(json) {
     viz(json, SCORES_FILE); 
@@ -24,6 +24,7 @@ var float_fmt = d3.format(".2f");
 var int_fmt = d3.format(".1f");
 
 function viz_file(f) {
+    console.log(f);
     d3.json(ROOT_URL+f, function(json) {
 	viz(json, f); 
     });
