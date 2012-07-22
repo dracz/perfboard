@@ -24,7 +24,7 @@ This section describes a simplified development lifecycle for continuous context
 
 ## Setup
 - [python][] 2.7 
-- [iso8601.py][http://pypi.python.org/pypi/iso8601/] $ pip install iso8601
+- [iso8601.py](http://pypi.python.org/pypi/iso8601/) $ pip install iso8601
 
 ## Implementation
 The command line interface and scoring rules are implemented in [python]() 2.7. The visualizations are made with javascript, [jQuery](http://jquery.com), and [d3.js](http://d3js.org). [iso8601.py](http://pypi.python.org/pypi/iso8601/) is used for date parsing in python
