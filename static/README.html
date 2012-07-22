@@ -2,6 +2,8 @@
 
 <p>A performance metrics dashboard for continuous context recognition systems</p>
 
+<p><link rel="stylesheet" href="css/style.css" type="text/css"/></p>
+
 <script src="js/jquery.js"></script>
 
 <script src="js/d3.js"></script>
@@ -50,7 +52,7 @@
 
 <pre><code id="truth_example"></code></pre>
 
-<script>d3.json("example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("json/example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
 
 <p>The following table describes the various fields of ground truth items:</p>
 
@@ -131,7 +133,7 @@
 
 <pre><code id="results_example"></code></pre>
 
-<script>d3.json("example_result.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("json/example_result.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
 
 <p><a name="cmdline"></a></p>
 
@@ -174,7 +176,7 @@
 
 <pre><code id="scores_example"></code></pre>
 
-<script>d3.json("example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("json/example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
 
 <p>The result object has the following fields:</p>
 
@@ -202,7 +204,7 @@
 
 <p>The top of the dashboard shows an overview of results from all the test cases in a test run:</p>
 
-<p><img src="dashboard_top.png"/></p>
+<p><img src="img/dashboard_top.png"/></p>
 
 <p>The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of items detected, and the overall stats for frame and event scores. Frame scores report the fraction of time that the detection output matches the ground truth. <em>Positive frames</em> are those where we have a ground truth prediction for the frame, <em>negative frames</em> are those where there is no ground truth label (null-class). Overview statistics and pie charts for <em>positive frames</em>, <em>negative frames</em>, <em>ground truth events</em>, and <em>detected events</em> show the rates of the various kinds of errors.</p>
 
@@ -210,7 +212,7 @@
 
 <p>Each ground truth case in a result set is rendered in a result detail panel similar to that shown here:</p>
 
-<p><img src="dashboard_case_detail.png"/></p>
+<p><img src="img/dashboard_case_detail.png"/></p>
 
 <p>The result detail shows similar statistics and pie charts for <em>positive frames</em>, <em>negative frames</em>, <em>ground truth events</em>, and <em>detected events</em>, but also includes a time interval diagram and event analysis diagram. The time-interval diagram shows the truth, detection, and segment time intervals and corresponding scores. Hovering over the intervals will show the timing, labels, and scores. The event analysis diagrams shows the truth and detected event scores in a single chart.</p>
 

@@ -1,12 +1,13 @@
 # perfboard
 A performance metrics dashboard for continuous context recognition systems
 
+<link rel="stylesheet" href="css/style.css" type="text/css"/>
 
-<script src="jquery.js"></script>
-<script src="d3.js"></script>
-<script src="util.js" type="text/javascript"></script>
+<script src="js/jquery.js"></script>
+<script src="js/d3.js"></script>
+<script src="js/util.js" type="text/javascript"></script>
 
-<!-- To generate the html from this markdown file: markdown --html4tags README.md > static/README.html -->
+<!-- To generate the html from this markdown file: markdown --html4tags about.md > static/about.html -->
 
 ## Background
 We've been investigating systems for automated recognition of places, visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data from labeled streams of sensor data, 2) interfacing with context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[[1](#ref1)]</span>.
@@ -39,7 +40,7 @@ Ground truth files encode labels containing the precise start and end times of s
 
 <pre><code id="truth_example"></code></pre>
 
-<script>d3.json("example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("json/example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
 
 The following table describes the various fields of ground truth items:
 
@@ -105,7 +106,7 @@ Raw data are fed to a recognizer using the `process()` method. Results are retri
 The `get_results()` method returns lists of dictionaries containing the labeled time intervals. For example, recognizer results have the following form (after json-encoding):
 
 <pre><code id="results_example"></code></pre>
-<script>d3.json("example_result.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("json/example_result.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
 
 
 <a name="cmdline"></a>
@@ -139,7 +140,7 @@ To run the example tests conveniently, use:
 Final test results are encoded in a object that combines all [ground truth][] items, results from recognizer `get_results()`, and all performance metrics. For example, test results from the above example might look like the following:
 
 <pre><code id="scores_example"></code></pre>
-<script>d3.json("example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
+<script>d3.json("json/example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
 
 The result object has the following fields:
 
@@ -161,7 +162,7 @@ The dashboard can be accessed by running a web server and serving the `perfboard
 
 The top of the dashboard shows an overview of results from all the test cases in a test run:
 
-<img src="dashboard_top.png"/>
+<img src="img/dashboard_top.png"/>
 
 The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of items detected, and the overall stats for frame and event scores. Frame scores report the fraction of time that the detection output matches the ground truth. _Positive frames_ are those where we have a ground truth prediction for the frame, _negative frames_ are those where there is no ground truth label (null-class). Overview statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_ show the rates of the various kinds of errors.
 
@@ -169,7 +170,7 @@ The top bar also provides a pull-down selector to jump to individual test result
 
 Each ground truth case in a result set is rendered in a result detail panel similar to that shown here:
 
-<img src="dashboard_case_detail.png"/>
+<img src="img/dashboard_case_detail.png"/>
 
 The result detail shows similar statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_, but also includes a time interval diagram and event analysis diagram. The time-interval diagram shows the truth, detection, and segment time intervals and corresponding scores. Hovering over the intervals will show the timing, labels, and scores. The event analysis diagrams shows the truth and detected event scores in a single chart.
 

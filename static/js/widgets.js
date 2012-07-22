@@ -106,7 +106,7 @@ var SCORES_LIST = SCORES_DIR + "scores_list.json";
 function widget_title(node, title, json) {
     var n = node.append("div").attr("class", "stbox sttitle");
     n.append("a").attr("href", ROOT_URL).attr("class", "tlink").text(title);
-    n.append("a").attr("class", "h2_link").attr("href", "about.html").text("About");
+    n.append("a").attr("class", "h2_link").attr("href", "README.html").text("About");
 
     d3.json(SCORES_LIST, function(json) {
 	console.log(json);
