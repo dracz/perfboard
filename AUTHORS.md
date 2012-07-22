@@ -1,9 +1,4 @@
 
 # perfboard contributors
 
-Based on:
-
-    git shortlog -s | sort -rn
-
-
 David Racz / Nokia Research Center (davidracz)
