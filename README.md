@@ -1,7 +1,7 @@
 # perfboard
 A performance metrics dashboard for continuous context recognition systems
 
-<link rel="stylesheet" type="text/css" href="markdown.css"></link>
+
 <script src="jquery.js"></script>
 <script src="d3.js"></script>
 <script src="util.js" type="text/javascript"></script>
@@ -38,6 +38,7 @@ Raw data files contain timestamped sensor and/or behavioral data logged (continu
 Ground truth files encode labels containing the precise start and end times of specific activities performed by the user during the raw data collection. The ground truth label files are encoded in [json][] and have the following form:
 
 <pre><code id="truth_example"></code></pre>
+
 <script>d3.json("example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
 
 The following table describes the various fields of ground truth items:
