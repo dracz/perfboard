@@ -1,11 +1,18 @@
 
 class AbstractRecognizer( object ):
-
     """Defines a simple, generic recognizer interface."""
+
+    def train(self, recs, labels):
+        """train the recognizer with the `recs` and ground truth `labels`""" 
+        raise NotImplementedError()
+        
+    def test(self, recs):
+        """process raw data records and update internal state. `recs` is an iterable."""
+        raise NotImplementedError()
 
     def process(self, recs):
         """process raw data records and update internal state. `recs` is an iterable."""
-        raise NotImplementedError()
+        self.test(recs)
 
 
     def get_results(self, time_range=None):
@@ -23,5 +30,7 @@ class AbstractRecognizer( object ):
 
 
     def reset(self):
-        """reset the internal state of the detector and forget all recognized events"""
-        raise NotImplementedError()
+        """reset all the state of the recognizer. 
+        this is called between test cases to prevent side effects"""
+        raise NotImplementedError()        
+

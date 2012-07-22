@@ -7,8 +7,6 @@ from itertools import islice
 import json, pprint
 from collections import defaultdict
 
-sys.path.append("..")
-
 from iso8601.iso8601 import parse_date
 
 def score_results(results):

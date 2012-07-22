@@ -1,3 +1,5 @@
+//http://stackoverflow.com/questions/4810841/json-pretty-print-using-javascript
+
 function syntaxHighlight(json) {
     if (typeof json != 'string') {
         json = JSON.stringify(json, undefined, 2);
