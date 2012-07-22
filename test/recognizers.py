@@ -6,6 +6,8 @@ sys.path.append("..")
 
 from recog import AbstractRecognizer
 
+""" These are some dummy recognizers that are used to test the system"""
+
 class DummyWalkingDetector(AbstractRecognizer):
     """always return the walking results from the example output"""
     def labels_supported(self):

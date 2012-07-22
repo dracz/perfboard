@@ -26,9 +26,9 @@ This section provides an overview of a typical development process for a continu
 
 4. **Iteration** - Based on the performance results, we may return to step 2 and tweak parameters, modify code, try something new, etc. Alternatively, we can return to step 1 to gather more labeled data to scale up the testing. Once the performance of a recognizer is above the desired level for a diverse data set, we can be more confident in the feasibility of the approach and begin to move toward productization.
 
-## Setup
-
-_List install/setup instructions here..._
+## Dependencies
+- [python][] 2.7 
+- [iso8601.py][http://pypi.python.org/pypi/iso8601/] $ pip install iso8601
 
 
 <a id="raw_data"></a>
@@ -211,4 +211,6 @@ For `FP` and `FN` segments, an error type field `error` is also present with one
 <a name="ref1"></a>
 <span class="bibref">[1]</span> Ward, J. A., Lukowicz, P., & Gellersen, H. W. (2011). Performance metrics for activity recognition. ACM Transactions on Intelligent Systems and Technology (TIST), 2(1), 1-23. doi:10.1145/1889681.1889687. [PDF](http://gtubicomp.pbworks.com/w/file/fetch/48480476/Ward2011-Performance%20metrics%20for%20activity%20recognition.pdf)
 
+## Powered by
+This project is based o
 <br/>
