@@ -1,13 +1,13 @@
 # perfboard
 A performance metrics dashboard for continuous context recognition systems
 
-<link rel="stylesheet" href="css/style.css" type="text/css"/>
+<link rel="stylesheet" href="css/web.css" type="text/css"/>
 
 <script src="js/jquery.js"></script>
 <script src="js/d3.js"></script>
 <script src="js/util.js" type="text/javascript"></script>
 
-<!-- To generate the html from this markdown file: markdown --html4tags about.md > static/about.html -->
+<!-- To generate the html from this markdown file: markdown --html4tags README.md > static/README.html -->
 
 ## Background
 We've been investigating systems for automated recognition of places, visits, paths, and activities from mobile sensor data, and have developed these tools to help evaluate the feasibility and quality of various approaches. This project provides a framework for: 1) defining ground truth data from labeled streams of sensor data, 2) interfacing with context recognizer(s), and 3) scoring and visualizing recognizer performance based on <span class='bibref'>[[1](#ref1)]</span>.
