@@ -1,7 +1,7 @@
 # perfboard
 A performance metrics dashboard for continuous context recognition systems
 
-<link rel="stylesheet" href="css/web.css" type="text/css"/>
+<link rel="stylesheet" href="css/markdown.css" type="text/css"/>
 
 <script src="js/jquery.js"></script>
 <script src="js/d3.js"></script>
