@@ -38,9 +38,69 @@ Raw data files contain timestamped sensor and/or behavioral data logged (continu
 ## Ground Truth
 Ground truth files encode labels containing the precise start and end times of specific activities performed by the user during the raw data collection. The ground truth label files are encoded in [json][] and have the following form:
 
-<pre><code id="truth_example"></code></pre>
-
-<script>d3.json("json/example_truth.json", function(json) {$("#truth_example").html(syntaxHighlight(json));});</script>
+```json
+{
+    "data_path": "test/20120516_device123/*.gz", 
+    "description": "Activity recognition data collection with subject DR on morning of 5/16/2012", 
+    "device": "Nokia C7-00", 
+    "hw": "353755043225509", 
+    "labels": [
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:00:00-08:00", 
+            "t2": "2012-05-16T09:00:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "WALKING", 
+            "t1": "2012-05-16T09:00:30-08:00", 
+            "t2": "2012-05-16T09:02:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:02:30-08:00", 
+            "t2": "2012-05-16T09:03:00-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "WALKING", 
+            "t1": "2012-05-16T09:05:00-08:00", 
+            "t2": "2012-05-16T09:15:00-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_HAND", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:15:00-08:00", 
+            "t2": "2012-05-16T09:15:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_BACK_POCKET", 
+            "label": "RUNNING", 
+            "t1": "2012-05-16T09:15:30-08:00", 
+            "t2": "2012-05-16T09:18:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_HAND", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:18:30-08:00", 
+            "t2": "2012-05-16T09:20:00-08:00"
+        }
+    ], 
+    "subject": {
+        "bday": "08/22/1975", 
+        "gender": "male", 
+        "handedness": "RIGHT", 
+        "height": "183cm", 
+        "id": "DR", 
+        "weight": "165lbs"
+    }, 
+    "sw": "qt-hubris-client-v0.0.3", 
+    "t1": "2012-05-16T09:00:00-08:00", 
+    "t2": "2012-05-16T09:20:00-08:00"
+}
+```
 
 The following table describes the various fields of ground truth items:
 
@@ -95,8 +155,42 @@ Here are some predefined labels for various context items:
 ## Recognizer Interface
 Recognizers process time-ordered chunks of [raw data][] records and return lists of [recognizer results](#recognizer_results). Recognizers MUST implement the `recog.AbstractRecognizer` interface to be compatible with this framework. The `recog.AbstractRecognizer` [python][] class is shown here: 
 
-<pre><code id="recog"></code></pre>
-<script>d3.text("recog.py", function(text) {$("#recog").html(syntaxHighlight(text))});$("#recog");</script>
+```python
+
+class AbstractRecognizer( object ):
+    """Defines a simple, generic recognizer interface."""
+
+    def train(self, recs, labels):
+        """train the recognizer with the `recs` and ground truth `labels`""" 
+        raise NotImplementedError()
+        
+    def test(self, recs):
+        """process raw data records and update internal state. `recs` is an iterable."""
+        raise NotImplementedError()
+
+    def process(self, recs):
+        """process raw data records and update internal state. `recs` is an iterable."""
+        self.test(recs)
+
+    def get_results(self, time_range=None):
+        """return ordered list of recognition results of the form `[{"t1":datetime, "t2":datetime, "label":str}, ...]`
+        `time_range`, if present is a 2-tuple of datetime objects that restrict the result set to items with timestamps within, or overlapping, the range.
+        """
+        raise NotImplementedError()
+
+    def labels_supported(self):
+        """returns a list of labels that this recognizer supports (generates). 
+        This is used by the framework to determine how to score the recognizers given some arbitrary labeled ground truth data.
+        """
+        raise NotImplementedError()
+
+    def reset(self):
+        """reset all the state of the recognizer. 
+        this is called between test cases to prevent side effects"""
+        raise NotImplementedError()
+		
+```
+
 
 Raw data are fed to a recognizer using the `process()` method. Results are retrieved using the `get_results()` method and example is shown in [recognizer results](#recognizer_results). The `labels_supported()` method is used to filter the [ground truth][] labels to include only those supported by the specified recognizer before the results are compared.
 
@@ -105,11 +199,54 @@ Raw data are fed to a recognizer using the `process()` method. Results are retri
 
 The `get_results()` method returns lists of dictionaries containing the labeled time intervals. For example, recognizer results have the following form (after json-encoding):
 
-<pre><code id="results_example"></code></pre>
-<script>d3.json("json/example_result.json", function(json) {$("#results_example").html(syntaxHighlight(json));});</script>
-
 ```json
-[{"label": "STANDING", "t2": "2012-05-16T09:00:25-08:00", "t1": "2012-05-16T09:00:00-08:00"}, {"label": "WALKING", "t2": "2012-05-16T09:02:40-08:00", "t1": "2012-05-16T09:00:30-08:00"}, {"label": "RUNNING", "t2": "2012-05-16T09:05:46-08:00", "t1": "2012-05-16T09:05:15-08:00"}, {"label": "WALKING", "t2": "2012-05-16T09:06:06-08:00", "t1": "2012-05-16T09:05:48-08:00"}, {"label": "RUNNING", "t2": "2012-05-16T09:06:54-08:00", "t1": "2012-05-16T09:06:34-08:00"}, {"label": "RUNNING", "t2": "2012-05-16T09:07:20-08:00", "t1": "2012-05-16T09:06:59-08:00"}, {"label": "WALKING", "t2": "2012-05-16T09:10:00-08:00", "t1": "2012-05-16T09:09:12-08:00"}, {"label": "RUNNING", "t2": "2012-05-16T09:18:20-08:00", "t1": "2012-05-16T09:15:30-08:00"}, {"label": "STANDING", "t2": "2012-05-16T09:20:20-08:00", "t1": "2012-05-16T09:19:00-08:00"}]
+[
+    {
+        "label": "STANDING", 
+        "t1": "2012-05-16T09:00:00-08:00", 
+        "t2": "2012-05-16T09:00:25-08:00"
+    }, 
+    {
+        "label": "WALKING", 
+        "t1": "2012-05-16T09:00:30-08:00", 
+        "t2": "2012-05-16T09:02:40-08:00"
+    }, 
+    {
+        "label": "RUNNING", 
+        "t1": "2012-05-16T09:05:15-08:00", 
+        "t2": "2012-05-16T09:05:46-08:00"
+    }, 
+    {
+        "label": "WALKING", 
+        "t1": "2012-05-16T09:05:48-08:00", 
+        "t2": "2012-05-16T09:06:06-08:00"
+    }, 
+    {
+        "label": "RUNNING", 
+        "t1": "2012-05-16T09:06:34-08:00", 
+        "t2": "2012-05-16T09:06:54-08:00"
+    }, 
+    {
+        "label": "RUNNING", 
+        "t1": "2012-05-16T09:06:59-08:00", 
+        "t2": "2012-05-16T09:07:20-08:00"
+    }, 
+    {
+        "label": "WALKING", 
+        "t1": "2012-05-16T09:09:12-08:00", 
+        "t2": "2012-05-16T09:10:00-08:00"
+    }, 
+    {
+        "label": "RUNNING", 
+        "t1": "2012-05-16T09:15:30-08:00", 
+        "t2": "2012-05-16T09:18:20-08:00"
+    }, 
+    {
+        "label": "STANDING", 
+        "t1": "2012-05-16T09:19:00-08:00", 
+        "t2": "2012-05-16T09:20:20-08:00"
+    }
+]
 ```
 
 <a name="cmdline"></a>
@@ -142,8 +279,303 @@ To run the example tests conveniently, use:
 ## Test Results
 Final test results are encoded in a object that combines all [ground truth][] items, results from recognizer `get_results()`, and all performance metrics. For example, test results from the above example might look like the following:
 
-<pre><code id="scores_example"></code></pre>
-<script>d3.json("json/example_scores.json", function(json) {$("#scores_example").html(syntaxHighlight(json));});</script>
+```json
+{
+    "recognizers": [
+        "test.recognizers.DummyWalkingDetector"
+    ], 
+    "results": [
+        {
+            "data_path": "test/20120516_device123/*.gz", 
+            "description": "Activity recognition data collection with subject DR on morning of 5/16/2012", 
+            "detected": [
+                {
+                    "event_score": "C", 
+                    "label": "WALKING", 
+                    "t1": "2012-05-16T09:00:30-08:00", 
+                    "t2": "2012-05-16T09:02:40-08:00"
+                }, 
+                {
+                    "event_score": "F'", 
+                    "label": "WALKING", 
+                    "t1": "2012-05-16T09:05:48-08:00", 
+                    "t2": "2012-05-16T09:06:06-08:00"
+                }, 
+                {
+                    "event_score": "F'", 
+                    "label": "WALKING", 
+                    "t1": "2012-05-16T09:09:12-08:00", 
+                    "t2": "2012-05-16T09:10:00-08:00"
+                }
+            ], 
+            "device": "Nokia C7-00", 
+            "hw": "353755043225509", 
+            "labels": [
+                {
+                    "body_position": "RIGHT_FRONT_POCKET", 
+                    "event_score": "C", 
+                    "label": "WALKING", 
+                    "t1": "2012-05-16T09:00:30-08:00", 
+                    "t2": "2012-05-16T09:02:30-08:00"
+                }, 
+                {
+                    "body_position": "RIGHT_FRONT_POCKET", 
+                    "event_score": "F", 
+                    "label": "WALKING", 
+                    "t1": "2012-05-16T09:05:00-08:00", 
+                    "t2": "2012-05-16T09:15:00-08:00"
+                }
+            ], 
+            "labels_file": "test/example_truth.json", 
+            "recognizer": "test.recognizers.DummyWalkingDetector", 
+            "scores": {
+                "events": {
+                    "d_counts": {
+                        "C": 1, 
+                        "F'": 2, 
+                        "FM'": 0, 
+                        "I'": 0, 
+                        "M'": 0
+                    }, 
+                    "d_rates": {
+                        "C": 0.3333333333333333, 
+                        "F'": 0.6666666666666666, 
+                        "FM'": 0.0, 
+                        "I'": 0.0, 
+                        "M'": 0.0
+                    }, 
+                    "detected": [
+                        {
+                            "event_score": "C", 
+                            "label": "WALKING", 
+                            "t1": "2012-05-16T09:00:30-08:00", 
+                            "t2": "2012-05-16T09:02:40-08:00"
+                        }, 
+                        {
+                            "event_score": "F'", 
+                            "label": "WALKING", 
+                            "t1": "2012-05-16T09:05:48-08:00", 
+                            "t2": "2012-05-16T09:06:06-08:00"
+                        }, 
+                        {
+                            "event_score": "F'", 
+                            "label": "WALKING", 
+                            "t1": "2012-05-16T09:09:12-08:00", 
+                            "t2": "2012-05-16T09:10:00-08:00"
+                        }
+                    ], 
+                    "t_counts": {
+                        "C": 1, 
+                        "D": 0, 
+                        "F": 1, 
+                        "FM": 0, 
+                        "M": 0
+                    }, 
+                    "t_rates": {
+                        "C": 0.5, 
+                        "D": 0.0, 
+                        "F": 0.5, 
+                        "FM": 0.0, 
+                        "M": 0.0
+                    }, 
+                    "truths": [
+                        {
+                            "body_position": "RIGHT_FRONT_POCKET", 
+                            "event_score": "C", 
+                            "label": "WALKING", 
+                            "t1": "2012-05-16T09:00:30-08:00", 
+                            "t2": "2012-05-16T09:02:30-08:00"
+                        }, 
+                        {
+                            "body_position": "RIGHT_FRONT_POCKET", 
+                            "event_score": "F", 
+                            "label": "WALKING", 
+                            "t1": "2012-05-16T09:05:00-08:00", 
+                            "t2": "2012-05-16T09:15:00-08:00"
+                        }
+                    ]
+                }, 
+                "frame_score": {
+                    "acc": 0.5466666666666666, 
+                    "frame_counts": {
+                        "D": 0, 
+                        "F": 186.0, 
+                        "I": 0, 
+                        "M": 0, 
+                        "N": 480.0, 
+                        "Oe": 10.0, 
+                        "Os": 0, 
+                        "P": 720.0, 
+                        "TN": 470.0, 
+                        "TP": 186.0, 
+                        "Ue": 300.0, 
+                        "Us": 48.0
+                    }, 
+                    "n_rate": 0.4, 
+                    "n_rates": {
+                        "Ir": 0.0, 
+                        "Mr": 0.0, 
+                        "Oer": 0.020833333333333332, 
+                        "Osr": 0.0, 
+                        "TNr": 0.9791666666666666
+                    }, 
+                    "p_rate": 0.6, 
+                    "p_rates": {
+                        "Dr": 0.0, 
+                        "Fr": 0.25833333333333336, 
+                        "TPr": 0.25833333333333336, 
+                        "Uer": 0.4166666666666667, 
+                        "Usr": 0.06666666666666667
+                    }
+                }, 
+                "segments": [
+                    {
+                        "score": "TN", 
+                        "t1": "2012-05-16T09:00:00-08:00", 
+                        "t2": "2012-05-16T09:00:30-08:00"
+                    }, 
+                    {
+                        "score": "TN", 
+                        "t1": "2012-05-16T09:00:30-08:00", 
+                        "t2": "2012-05-16T09:00:30-08:00"
+                    }, 
+                    {
+                        "score": "TP", 
+                        "t1": "2012-05-16T09:00:30-08:00", 
+                        "t2": "2012-05-16T09:02:30-08:00"
+                    }, 
+                    {
+                        "err": "Oe", 
+                        "score": "FP", 
+                        "t1": "2012-05-16T09:02:30-08:00", 
+                        "t2": "2012-05-16T09:02:40-08:00"
+                    }, 
+                    {
+                        "score": "TN", 
+                        "t1": "2012-05-16T09:02:40-08:00", 
+                        "t2": "2012-05-16T09:05:00-08:00"
+                    }, 
+                    {
+                        "err": "Us", 
+                        "score": "FN", 
+                        "t1": "2012-05-16T09:05:00-08:00", 
+                        "t2": "2012-05-16T09:05:48-08:00"
+                    }, 
+                    {
+                        "score": "TP", 
+                        "t1": "2012-05-16T09:05:48-08:00", 
+                        "t2": "2012-05-16T09:06:06-08:00"
+                    }, 
+                    {
+                        "err": "F", 
+                        "score": "FN", 
+                        "t1": "2012-05-16T09:06:06-08:00", 
+                        "t2": "2012-05-16T09:09:12-08:00"
+                    }, 
+                    {
+                        "score": "TP", 
+                        "t1": "2012-05-16T09:09:12-08:00", 
+                        "t2": "2012-05-16T09:10:00-08:00"
+                    }, 
+                    {
+                        "err": "Ue", 
+                        "score": "FN", 
+                        "t1": "2012-05-16T09:10:00-08:00", 
+                        "t2": "2012-05-16T09:15:00-08:00"
+                    }, 
+                    {
+                        "score": "TN", 
+                        "t1": "2012-05-16T09:15:00-08:00", 
+                        "t2": "2012-05-16T09:20:00-08:00"
+                    }
+                ]
+            }, 
+            "subject": {
+                "bday": "08/22/1975", 
+                "gender": "male", 
+                "handedness": "RIGHT", 
+                "height": "183cm", 
+                "id": "DR", 
+                "weight": "165lbs"
+            }, 
+            "sw": "qt-hubris-client-v0.0.3", 
+            "t1": "2012-05-16T09:00:00-08:00", 
+            "t2": "2012-05-16T09:20:00-08:00"
+        }
+    ], 
+    "scores": {
+        "event_scores": {
+            "d_counts": {
+                "C": 1, 
+                "F'": 2, 
+                "FM'": 0, 
+                "I'": 0, 
+                "M'": 0
+            }, 
+            "d_rates": {
+                "C": 0.3333333333333333, 
+                "F'": 0.6666666666666666, 
+                "FM'": 0.0, 
+                "I'": 0.0, 
+                "M'": 0.0
+            }, 
+            "t_counts": {
+                "C": 1, 
+                "D": 0, 
+                "F": 1, 
+                "FM": 0, 
+                "M": 0
+            }, 
+            "t_rates": {
+                "C": 0.5, 
+                "D": 0.0, 
+                "F": 0.5, 
+                "FM": 0.0, 
+                "M": 0.0
+            }
+        }, 
+        "frame_scores": {
+            "acc": 0.5466666666666666, 
+            "frame_counts": {
+                "D": 0, 
+                "F": 186.0, 
+                "I": 0, 
+                "M": 0, 
+                "N": 480.0, 
+                "Oe": 10.0, 
+                "Os": 0, 
+                "P": 720.0, 
+                "TN": 470.0, 
+                "TP": 186.0, 
+                "Ue": 300.0, 
+                "Us": 48.0
+            }, 
+            "n_rate": 0.4, 
+            "n_rates": {
+                "Ir": 0.0, 
+                "Mr": 0.0, 
+                "Oer": 0.020833333333333332, 
+                "Osr": 0.0, 
+                "TNr": 0.9791666666666666
+            }, 
+            "p_rate": 0.6, 
+            "p_rates": {
+                "Dr": 0.0, 
+                "Fr": 0.25833333333333336, 
+                "TPr": 0.25833333333333336, 
+                "Uer": 0.4166666666666667, 
+                "Usr": 0.06666666666666667
+            }
+        }
+    }, 
+    "stats": {
+        "detected_count": 3, 
+        "segment_count": 11, 
+        "truth_count": 2
+    }, 
+    "t": "2012-06-04T09:31:07.995121"
+}
+```
 
 The result object has the following fields:
 

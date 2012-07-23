@@ -1,1 +1,61 @@
-{"labels": [{"body_position": "RIGHT_FRONT_POCKET", "label": "STANDING", "t2": "2012-05-16T09:00:30-08:00", "t1": "2012-05-16T09:00:00-08:00"}, {"body_position": "RIGHT_FRONT_POCKET", "label": "WALKING", "t2": "2012-05-16T09:02:30-08:00", "t1": "2012-05-16T09:00:30-08:00"}, {"body_position": "RIGHT_FRONT_POCKET", "label": "STANDING", "t2": "2012-05-16T09:03:00-08:00", "t1": "2012-05-16T09:02:30-08:00"}, {"body_position": "RIGHT_FRONT_POCKET", "label": "WALKING", "t2": "2012-05-16T09:15:00-08:00", "t1": "2012-05-16T09:05:00-08:00"}, {"body_position": "RIGHT_HAND", "label": "STANDING", "t2": "2012-05-16T09:15:30-08:00", "t1": "2012-05-16T09:15:00-08:00"}, {"body_position": "RIGHT_BACK_POCKET", "label": "RUNNING", "t2": "2012-05-16T09:18:30-08:00", "t1": "2012-05-16T09:15:30-08:00"}, {"body_position": "RIGHT_HAND", "label": "STANDING", "t2": "2012-05-16T09:20:00-08:00", "t1": "2012-05-16T09:18:30-08:00"}], "description": "Activity recognition data collection with subject DR on morning of 5/16/2012", "sw": "qt-hubris-client-v0.0.3", "data_path": "test/20120516_device123/*.gz", "t2": "2012-05-16T09:20:00-08:00", "hw": "353755043225509", "t1": "2012-05-16T09:00:00-08:00", "device": "Nokia C7-00", "subject": {"weight": "165lbs", "bday": "08/22/1975", "gender": "male", "handedness": "RIGHT", "height": "183cm", "id": "DR"}}
+{
+    "data_path": "test/20120516_device123/*.gz", 
+    "description": "Activity recognition data collection with subject DR on morning of 5/16/2012", 
+    "device": "Nokia C7-00", 
+    "hw": "353755043225509", 
+    "labels": [
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:00:00-08:00", 
+            "t2": "2012-05-16T09:00:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "WALKING", 
+            "t1": "2012-05-16T09:00:30-08:00", 
+            "t2": "2012-05-16T09:02:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:02:30-08:00", 
+            "t2": "2012-05-16T09:03:00-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_FRONT_POCKET", 
+            "label": "WALKING", 
+            "t1": "2012-05-16T09:05:00-08:00", 
+            "t2": "2012-05-16T09:15:00-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_HAND", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:15:00-08:00", 
+            "t2": "2012-05-16T09:15:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_BACK_POCKET", 
+            "label": "RUNNING", 
+            "t1": "2012-05-16T09:15:30-08:00", 
+            "t2": "2012-05-16T09:18:30-08:00"
+        }, 
+        {
+            "body_position": "RIGHT_HAND", 
+            "label": "STANDING", 
+            "t1": "2012-05-16T09:18:30-08:00", 
+            "t2": "2012-05-16T09:20:00-08:00"
+        }
+    ], 
+    "subject": {
+        "bday": "08/22/1975", 
+        "gender": "male", 
+        "handedness": "RIGHT", 
+        "height": "183cm", 
+        "id": "DR", 
+        "weight": "165lbs"
+    }, 
+    "sw": "qt-hubris-client-v0.0.3", 
+    "t1": "2012-05-16T09:00:00-08:00", 
+    "t2": "2012-05-16T09:20:00-08:00"
+}
