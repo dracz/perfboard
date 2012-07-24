@@ -578,7 +578,7 @@ The dashboard can be accessed by running a web server and serving the `perfboard
 
 The top of the dashboard shows an overview of results from all the test cases in a test run:
 
-<img src="static/img/dashboard_top.png"/>
+<img src="http://dracz.github.com/perfboard/img/dashboard_top.png"/>
 
 The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of items detected, and the overall stats for frame and event scores. Frame scores report the fraction of time that the detection output matches the ground truth. _Positive frames_ are those where we have a ground truth prediction for the frame, _negative frames_ are those where there is no ground truth label (null-class). Overview statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_ show the rates of the various kinds of errors.
 
@@ -586,7 +586,7 @@ The top bar also provides a pull-down selector to jump to individual test result
 
 Each ground truth case in a result set is rendered in a result detail panel similar to that shown here:
 
-<img src="static/img/dashboard_case_detail.png"/>
+<img src="http://dracz.github.com/perfboard/img/dashboard_case_detail.png"/>
 
 The result detail shows similar statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_, but also includes a time interval diagram and event analysis diagram. The time-interval diagram shows the truth, detection, and segment time intervals and corresponding scores. Hovering over the intervals will show the timing, labels, and scores. The event analysis diagrams shows the truth and detected event scores in a single chart.
 
