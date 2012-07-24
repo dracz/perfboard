@@ -3,10 +3,6 @@ A performance metrics dashboard for continuous context recognition systems
 
 <link rel="stylesheet" href="css/markdown.css" type="text/css"/>
 
-<script src="js/jquery.js"></script>
-<script src="js/d3.js"></script>
-<script src="js/util.js" type="text/javascript"></script>
-
 <!-- To generate the html from this markdown file: markdown --html4tags README.md > static/README.html -->
 
 ## Background
@@ -125,31 +121,16 @@ How ground truth labels are initially captured is out of the scope of this docum
 ### Labels
 Here are some predefined labels for various context items:
 
-- `AT_HOME`
-- `AT_WORK`
-- `IN_PLACE` - Visiting a specific place. The `data` portion of `IN_PLACE` labels are dictionaries that may contain the following optional fields:
+- `AT_HOME`, `AT_WORK`
+- `IN_PLACE`, `ENTERING_PLACE`, `EXITING_PLACE` - Visiting, entering, or exiting, a specific place. The `data` portion of these labels are dictionaries that may contain the following optional fields:
     - `id` -  The place id 
 	- `name` - The place name 
 	- `address` - The place address 
-	- `ll` - Approximate ll of the visit 
+	- `ll` - Approximate (lat, lng) of the visit 
 	- `desc` - A description of the place 
-- `ENTERING_PLACE`
-- `EXITING_PLACE`
-- `WALKING`
-- `RUNNING`
-- `BIKING`
-- `SKATEBOARDING`
-- `SNOWBOARDING`
-- `SITTING`
-- `STANDING`
-- `SLEEPING`
-- `DRIVING`
-- `IN_CAR`
-- `ON_TRAIN`
-- `ON_BUS`
-- `ON_BOAT`
-- `ON_PLANE`
-- ...
+- `WALKING`, `RUNNING`, `BIKING`, `SKATEBOARDING`, `SNOWBOARDING`, `SITTING`, `STANDING`, `SLEEPING`
+- `DRIVING`, `IN_CAR`, `ON_TRAIN`, `ON_BUS`, `ON_BOAT`, `ON_PLANE`
+
 
 <a id="recognizer_interface"></a>
 ## Recognizer Interface
@@ -597,7 +578,7 @@ The dashboard can be accessed by running a web server and serving the `perfboard
 
 The top of the dashboard shows an overview of results from all the test cases in a test run:
 
-<img src="img/dashboard_top.png"/>
+<img src="static/img/dashboard_top.png"/>
 
 The overview shows the test time, total number of ground truth cases, total number of ground truth labels, total number of items detected, and the overall stats for frame and event scores. Frame scores report the fraction of time that the detection output matches the ground truth. _Positive frames_ are those where we have a ground truth prediction for the frame, _negative frames_ are those where there is no ground truth label (null-class). Overview statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_ show the rates of the various kinds of errors.
 
@@ -605,7 +586,7 @@ The top bar also provides a pull-down selector to jump to individual test result
 
 Each ground truth case in a result set is rendered in a result detail panel similar to that shown here:
 
-<img src="img/dashboard_case_detail.png"/>
+<img src="static/img/dashboard_case_detail.png"/>
 
 The result detail shows similar statistics and pie charts for _positive frames_, _negative frames_, _ground truth events_, and _detected events_, but also includes a time interval diagram and event analysis diagram. The time-interval diagram shows the truth, detection, and segment time intervals and corresponding scores. Hovering over the intervals will show the timing, labels, and scores. The event analysis diagrams shows the truth and detected event scores in a single chart.
 
